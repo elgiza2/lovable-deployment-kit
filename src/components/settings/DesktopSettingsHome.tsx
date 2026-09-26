@@ -9,8 +9,8 @@ import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { translateExactText, useUserLang, AVAILABLE_LANGS } from "@/lib/authI18n";
 import OliveAvatar from "@/components/branding/OliveAvatar";
 import MegsyStar from "@/components/branding/MegsyStar";
-import {
 import { signOutEverywhere } from "@/lib/signOutEverywhere";
+import {
   AccountIcon,
   BillingIcon,
   AppearanceIcon,

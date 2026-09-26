@@ -12,8 +12,8 @@ import { useSettingsShell } from "@/components/settings/SettingsShell";
 import { useSidebarCollapsed } from "@/hooks/useSidebarCollapsed";
 import { translateExactText, useUserLang } from "@/lib/authI18n";
 import AppSidebar from "@/components/layout/AppSidebar";
-import {
 import { signOutEverywhere } from "@/lib/signOutEverywhere";
+import {
   AccountIcon,
   WorkspacesIcon,
   BillingIcon,
