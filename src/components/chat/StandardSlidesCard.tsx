@@ -143,11 +143,13 @@ const FirstSlideThumb = ({ url, onFail }: { url: string; onFail: () => void }) =
   }, [url, onFail]);
 
   return (
-    <div
-      className={`absolute inset-0 origin-top-left transition-opacity duration-300 ${ready ? "opacity-100" : "opacity-0"}`}
-      style={{ width: 960, height: 540, transform: "scale(var(--thumb-scale, 0.4375))" }}
-    >
-      <div ref={hostRef} className="pptx-thumb" />
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
+      <div
+        className={`absolute left-0 top-0 origin-top-left transition-opacity duration-300 ${ready ? "opacity-100" : "opacity-0"}`}
+        style={{ width: 960, height: 540, transform: `scale(${scale})` }}
+      >
+        <div ref={hostRef} className="pptx-thumb" />
+      </div>
     </div>
   );
 };
