@@ -20,7 +20,6 @@ const OFFERS: Offer[] = [
   { id: "gpt_25", image: "/offer-gpt-25.webp", title: "GPT 2.5 Unlimited", titleAr: "GPT 2.5 بلا حدود", body: "Use our flagship model without limits for a full month.", bodyAr: "استخدم أقوى نماذجنا بلا حدود لمدة شهر كامل." },
   { id: "computer", image: "/offer-computer-25.webp", title: "Megsy Computer", titleAr: "ميغسي كومبيوتر", body: "Let Megsy browse, click, research and get work done for you.", bodyAr: "خلّي ميغسي يتصفح ويبحث وينفذ المهام بدلًا منك." },
   { id: "agent", image: "/offer-agent-25.webp", title: "Megsy Agent", titleAr: "وكيل ميغسي", body: "Turn complex goals into finished work with an autonomous AI agent.", bodyAr: "حوّل المهام المعقدة إلى شغل مكتمل مع وكيل ذكاء اصطناعي مستقل." },
-  { id: "seedance_25", image: "/offer-seedance-25.webp", title: "Seedance 2.5 Unlimited", titleAr: "Seedance 2.5 بلا حدود", body: "Create videos freely for 7 full days for only $7.", bodyAr: "أنشئ فيديوهاتك بحرية لمدة 7 أيام كاملة بـ7$ فقط." },
 ];
 
 export default function SeedanceOfferDialog() {
