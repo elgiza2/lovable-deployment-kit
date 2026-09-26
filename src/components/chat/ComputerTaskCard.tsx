@@ -17,7 +17,8 @@ import {
 } from "@/lib/computer/client";
 import { cleanAgentResult } from "@/lib/computer/resultText";
 import ChatMessage from "@/components/chat/ChatMessage";
-import FilePreviewDialog, { type PreviewFile } from "@/components/chat/FilePreviewDialog";
+import { useNavigate } from "react-router-dom";
+import { stashFileForPreview } from "@/lib/filePreviewStore";
 import { useUserLang } from "@/lib/authI18n";
 
 
@@ -38,7 +39,17 @@ export default function ComputerTaskCard({ taskId }: Props) {
   const [events, setEvents] = useState<ComputerEvent[]>([]);
   const [timedOut, setTimedOut] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [preview, setPreview] = useState<PreviewFile | null>(null);
+  const navigate = useNavigate();
+  // Files open on their own full page (/file-preview/:id) instead of an overlay
+  // stacked on the conversation, so the viewer is clean and shareable.
+  const openPreview = (file: { url: string; name: string; type?: string | null }) => {
+    const id = stashFileForPreview({
+      name: file.name,
+      type: file.type || "application/octet-stream",
+      url: file.url,
+    });
+    navigate(`/file-preview/${id}`);
+  };
   // These two labels used to be hard-coded in Arabic and showed up in English
   // sessions too; follow the user's interface language instead.
   const lang = useUserLang();
@@ -219,9 +230,9 @@ export default function ComputerTaskCard({ taskId }: Props) {
         }
       }
       const url = URL.createObjectURL(new Blob([html], { type: "text/html;charset=utf-8" }));
-      setPreview({ url, name: htmlFile.name, type: "text/html" });
+      openPreview({ url, name: htmlFile.name, type: "text/html" });
     } catch {
-      setPreview({ url: htmlFile.url, name: htmlFile.name, type: "text/html" });
+      openPreview({ url: htmlFile.url, name: htmlFile.name, type: "text/html" });
     }
   };
 
@@ -248,7 +259,7 @@ export default function ComputerTaskCard({ taskId }: Props) {
             <button
               key={f.url}
               type="button"
-              onClick={() => setPreview({ url: f.url, name: f.name, type: f.type })}
+              onClick={() => openPreview({ url: f.url, name: f.name, type: f.type })}
               title={f.name}
               className="group flex w-full items-center gap-3 overflow-hidden rounded-2xl border border-border/50 bg-foreground/[0.03] p-3 text-start transition-colors hover:bg-foreground/[0.07]"
             >
@@ -284,8 +295,6 @@ export default function ComputerTaskCard({ taskId }: Props) {
       ) : (
         fileGrid
       )}
-
-      <FilePreviewDialog file={preview} onClose={() => setPreview(null)} />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import { useSettingsShell } from "@/components/settings/SettingsShell";
 import { useSidebarCollapsed } from "@/hooks/useSidebarCollapsed";
 import { translateExactText, useUserLang } from "@/lib/authI18n";
 import AppSidebar from "@/components/layout/AppSidebar";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 import {
   AccountIcon,
   WorkspacesIcon,
@@ -97,13 +98,7 @@ export function DesktopSettingsLayout({
       confirmLabel: "Log out",
     });
     if (!ok) return;
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate("/auth", { replace: true });
-    } catch (err) {
-      toast.error(sanitizeErrorMessage(err, "Could not sign out. Please try again."));
-    }
+    await signOutEverywhere();
   };
 
   const isActive = (path: string) => {
@@ -147,7 +142,7 @@ export function DesktopSettingsLayout({
           <aside
             data-app-sidebar="true"
             className="theme-fixed relative z-40 hidden min-h-0 md:flex shrink-0 overflow-hidden border-e border-transparent"
-            style={{ width: 260, minWidth: 260, flexBasis: 260, backgroundColor: "transparent" }}
+            style={{ width: 320, minWidth: 320, flexBasis: 320, backgroundColor: "transparent" }}
           >
             <AppSidebar
               inline

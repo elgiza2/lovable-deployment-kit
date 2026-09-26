@@ -32,6 +32,7 @@ import { useCredits } from "@/hooks/useCredits";
 import { t as authT, useUserLang, AVAILABLE_LANGS } from "@/lib/authI18n";
 import { goBackOr } from "@/lib/navigation";
 import { getStoredTheme, setTheme, type ThemeMode } from "@/lib/theme";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 
 type Row = {
   icon: React.ComponentType<{ className?: string }>;
@@ -91,8 +92,7 @@ const ManusSettingsMobile = () => {
       confirmLabel: "Log out",
     });
     if (!ok) return;
-    await supabase.auth.signOut();
-    navigate("/auth");
+    await signOutEverywhere();
   };
 
   const [themeMode, setThemeMode] = useState<ThemeMode>(() => getStoredTheme());

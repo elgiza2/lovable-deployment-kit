@@ -27,6 +27,7 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { supabase } from "@/integrations/supabase/client";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 
 type RecentConv = { id: string; title: string; updated_at: string };
 
@@ -140,8 +141,7 @@ export default function CommandPalette() {
       icon: LogOut,
       run: async () => {
         setOpen(false);
-        await supabase.auth.signOut();
-        navigate("/auth", { replace: true });
+        await signOutEverywhere();
       },
     },
   ];

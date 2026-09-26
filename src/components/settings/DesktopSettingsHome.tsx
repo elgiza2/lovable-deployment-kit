@@ -9,6 +9,7 @@ import { useActiveAccount } from "@/hooks/useActiveAccount";
 import { translateExactText, useUserLang, AVAILABLE_LANGS } from "@/lib/authI18n";
 import OliveAvatar from "@/components/branding/OliveAvatar";
 import MegsyStar from "@/components/branding/MegsyStar";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 import {
   AccountIcon,
   BillingIcon,
@@ -75,8 +76,7 @@ export function DesktopSettingsHome() {
       confirmLabel: "Log out",
     });
     if (!ok) return;
-    await supabase.auth.signOut();
-    go("/auth");
+    await signOutEverywhere();
   };
 
   const groups: Group[] = [

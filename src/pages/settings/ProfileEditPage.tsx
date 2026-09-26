@@ -8,6 +8,7 @@ import { sanitizeErrorMessage } from "@/lib/sanitizeError";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { SubShell, SubSection, SubCard, DangerCallout } from "@/components/settings/SubShell";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 
 const ProfileEditPage = () => {
   const navigate = useNavigate();
@@ -170,16 +171,7 @@ const ProfileEditPage = () => {
   const handleLogout = async () => {
     if (loggingOut) return;
     setLoggingOut(true);
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate("/auth", { replace: true });
-    } catch (err) {
-      toast.error(sanitizeErrorMessage(err, "Could not sign out. Please try again."));
-    } finally {
-      setLoggingOut(false);
-      setLogoutOpen(false);
-    }
+    await signOutEverywhere();
   };
 
   const openDelete = () => setConfirmOpen(true);

@@ -1,7 +1,7 @@
 // Renders a generated PPTX presentation.
 // Uses pptx-preview to render real slide thumbnails fully client-side.
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Download, ArrowLeft, Loader2, Share2, RectangleVertical, RectangleHorizontal } from "lucide-react";
 import { toast } from "sonner";
@@ -108,8 +108,68 @@ const OilPreviewArtwork = ({ title, colors }: Pick<Props, "title" | "colors">) =
   );
 };
 
+/**
+ * Renders the real first slide of the generated deck as the card thumbnail, so
+ * two decks made from different templates no longer look identical. Falls back
+ * to the painted artwork when the file can't be rendered in the browser.
+ */
+const FirstSlideThumb = ({ url, onFail }: { url: string; onFail: () => void }) => {
+  const hostRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [ready, setReady] = useState(false);
+  const [scale, setScale] = useState(0.4375);
+
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node) return;
+    const measure = () => setScale(Math.max(0.1, node.clientWidth / 960));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const { init } = await import("pptx-preview");
+        if (cancelled || !hostRef.current) return;
+        hostRef.current.innerHTML = "";
+        const width = 960;
+        const previewer = init(hostRef.current, { width, height: (width * 9) / 16 });
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const buf = await res.arrayBuffer();
+        if (cancelled) return;
+        await previewer.preview(buf);
+        if (cancelled) return;
+        setReady(true);
+      } catch {
+        if (!cancelled) onFail();
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [url, onFail]);
+
+  return (
+    <div ref={wrapRef} className="absolute inset-0 overflow-hidden">
+      <div
+        className={`absolute left-0 top-0 origin-top-left transition-opacity duration-300 ${ready ? "opacity-100" : "opacity-0"}`}
+        style={{ width: 960, height: 540, transform: `scale(${scale})` }}
+      >
+        <div ref={hostRef} className="pptx-thumb" />
+      </div>
+    </div>
+  );
+};
+
 const StandardSlidesCard = ({ title, url, colors, chatName }: Props) => {
   const navigate = useNavigate();
+  const [thumbFailed, setThumbFailed] = useState(false);
+  const onFail = useCallback(() => setThumbFailed(true), []);
 
   const openPreview = () => {
     const id = stashSlidesFileForPreview({ kind: "pptx", title, url, chatName: chatName || title });
@@ -122,8 +182,19 @@ const StandardSlidesCard = ({ title, url, colors, chatName }: Props) => {
         onClick={openPreview}
         className="slides-card-preview relative block w-full aspect-[16/9] overflow-hidden cursor-pointer group/preview"
       >
-        <OilPreviewArtwork title={title} colors={colors} />
-        <div className="absolute inset-x-5 bottom-5 max-w-[80%] text-left text-xl font-semibold leading-tight text-white drop-shadow-md">{title}</div>
+        {thumbFailed ? (
+          <>
+            <OilPreviewArtwork title={title} colors={colors} />
+            <div className="absolute inset-x-5 bottom-5 max-w-[80%] text-left text-xl font-semibold leading-tight text-white drop-shadow-md">
+              {title}
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-foreground/[0.06]" />
+            <FirstSlideThumb url={url} onFail={onFail} />
+          </>
+        )}
       </button>
 
       <div className="slides-card-actions px-4 pb-4 pt-4 flex gap-2">
@@ -144,6 +215,12 @@ const StandardSlidesCard = ({ title, url, colors, chatName }: Props) => {
           Download
         </a>
       </div>
+      <style>{`
+        .pptx-thumb .pptx-preview-wrapper { height: auto !important; max-height: none !important; overflow: hidden !important; background: transparent !important; }
+        .pptx-thumb [class*="pptx-preview-slide-wrapper"] { display: none !important; }
+        .pptx-thumb [class*="pptx-preview-slide-wrapper"]:first-of-type { display: block !important; position: relative !important; left: auto !important; top: auto !important; transform: none !important; opacity: 1 !important; visibility: visible !important; background: #fff; }
+        .pptx-thumb .pptx-preview-wrapper-pagination, .pptx-thumb .pptx-preview-wrapper-next { display: none !important; }
+      `}</style>
     </div>
   );
 };

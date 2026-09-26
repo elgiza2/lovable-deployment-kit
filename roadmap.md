@@ -36,6 +36,17 @@
   the chat composer stays visually stable on focus, and narrow-phone loading no longer goes blank.
 - React 19 nested-router warning removed by seeding browser history before React mounts.
 
+## QA pass (September 2026)
+- Seedance offer dialog: no focus ring on the CTA (`SeedanceOfferDialog.tsx`).
+- Computer surface: collapsed pill only, no reserved space, no duplicated status
+  (`ComputerRunViewport.tsx`) — live status stays in the thinking badge above it.
+- Computer narration answers in the user's language (`src/lib/languageDirective.ts`).
+- Files open on their own page `/file-preview/:id` instead of an in-chat overlay.
+- Sign-out goes through one resilient helper (`src/lib/signOutEverywhere.ts`).
+- Non-chat pages use the same 320px sidebar width as chat (settings, mail, pricing, referrals).
+- Chat empty state: new line + serif display face (`DesktopGreeting.tsx`).
+- Image models route through `anything-api`; slides cards render the real first slide.
+
 ## Open
 - [x] Report the actual 48-person funnel: visit, signup start/completion, payment page/method, Vodafone Cash, and proof/order completion.
 - [ ] Track each page view's visitor country.

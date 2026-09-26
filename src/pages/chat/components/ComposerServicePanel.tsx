@@ -64,10 +64,33 @@ export default function ComposerServicePanel({
   if (!showMediaPicker && !showTemplatePicker && !label) return null;
 
   const pickerButtonClass =
-    "flex h-full min-w-0 flex-1 items-center gap-2 rounded-full text-left text-[13px] font-medium text-foreground transition-colors active:scale-[0.99]";
+    "flex h-full min-w-0 max-w-[min(60vw,220px)] items-center gap-1.5 rounded-full text-left text-[13px] font-medium text-foreground outline-none transition-colors focus:outline-none focus-visible:outline-none active:scale-[0.99]";
+
+  const modeName =
+    localizedLabel ||
+    (isImages
+      ? isArabicUi
+        ? "صور"
+        : "Images"
+      : isVideo
+        ? isArabicUi
+          ? "فيديو"
+          : "Video"
+        : isSlides
+          ? isArabicUi
+            ? "عروض"
+            : "Slides"
+          : "");
 
   return (
-    <div data-media-service-panel={showMediaPicker ? "true" : undefined} className="flex h-8 items-center gap-1 rounded-full bg-foreground/[0.05] pl-3 pr-1">
+    <div
+      data-media-service-panel={showMediaPicker ? "true" : undefined}
+      className="mb-1 inline-flex h-8 w-fit max-w-full items-center gap-1.5 rounded-full bg-foreground/[0.05] pl-3 pr-1"
+    >
+      {modeName ? (
+        <span className="shrink-0 text-[12.5px] font-semibold text-foreground/70">{modeName}</span>
+      ) : null}
+
       {showMediaPicker ? (
         <button
           type="button"
@@ -76,10 +99,10 @@ export default function ComposerServicePanel({
           aria-haspopup="dialog"
           className={pickerButtonClass}
         >
-          <span className="min-w-0 flex-1 truncate">
+          <span className="min-w-0 truncate">
             {mediaModel?.name || (isArabicUi ? (isVideo ? "موديل فيديو" : "موديل صور") : isVideo ? "Video model" : "Image model")}
           </span>
-          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-foreground/40" strokeWidth={2.4} />
+          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-foreground/40" strokeWidth={2.2} />
         </button>
       ) : null}
 
@@ -91,14 +114,11 @@ export default function ComposerServicePanel({
           aria-haspopup="dialog"
           className={pickerButtonClass}
         >
-          <span className="min-w-0 flex-1 truncate">{template?.name || (isArabicUi ? "قالب العرض" : "Template")}</span>
-          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-foreground/40" strokeWidth={2.4} />
+          <span className="min-w-0 truncate">{template?.name || (isArabicUi ? "قالب العرض" : "Template")}</span>
+          <ChevronDown className="w-3.5 h-3.5 shrink-0 text-foreground/40" strokeWidth={2.2} />
         </button>
       ) : null}
 
-      {!showMediaPicker && !showTemplatePicker && localizedLabel ? (
-        <span className="min-w-0 flex-1 truncate text-[13px] font-medium text-foreground">{localizedLabel}</span>
-      ) : null}
 
       <button
         type="button"

@@ -1304,13 +1304,16 @@ Deno.serve(async (req) => {
         ? "runway"
         : model?.provider ?? (slug.startsWith("renderful-") ? "renderful" : "deapi"),
     ).toLowerCase();
-    const apiModel =
+    const bareSlug = slug.replace(/^(runway|renderful|deapi)-/, "");
+    const apiModel: string =
       model?.model_id_api ??
       (provider === "runway"
-        ? (RUNWAY_MODEL_ALIASES[apiModel] ?? RUNWAY_MODEL_ALIASES[slug] ?? apiModel.replace(/-/g, "_"))
+        ? (RUNWAY_MODEL_ALIASES[slug] ??
+          RUNWAY_MODEL_ALIASES[bareSlug] ??
+          bareSlug.replace(/-/g, "_"))
         : provider === "deapi"
           ? (DEAPI_MODELS[slug]?.api ?? "Flux1schnell")
-          : slug.replace(/^renderful-/, ""));
+          : bareSlug);
     const supportsEditing =
       provider === "runway"
         ? true

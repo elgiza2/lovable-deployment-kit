@@ -483,7 +483,7 @@ const ReferralsPage = () => {
       {isDesktop ? (
         <div className="flex h-[100dvh] w-full overflow-hidden bg-background text-foreground">
           <aside
-            style={{ width: 260, minWidth: 260, flexBasis: 260 }}
+            style={{ width: 320, minWidth: 320, flexBasis: 320 }}
             className="relative z-40 hidden shrink-0 overflow-hidden transition-[width,min-width,flex-basis] duration-300 md:flex"
           >
             <AppSidebar open inline forceExpanded onClose={() => {}} onNewChat={() => navigate("/")} />
