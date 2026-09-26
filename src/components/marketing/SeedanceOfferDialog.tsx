@@ -67,7 +67,7 @@ export default function SeedanceOfferDialog() {
       <DialogContent
         dir={isArabic ? "rtl" : "ltr"}
         onOpenAutoFocus={(event) => event.preventDefault()}
-        className="offers-bottom-sheet fixed bottom-0 left-1/2 top-auto z-50 grid max-h-[90dvh] w-full max-w-[540px] translate-x-[-50%] translate-y-0 gap-0 overflow-y-auto rounded-t-[32px] rounded-b-none border-0 bg-[#f3f1ed] p-0 text-[#121212] shadow-[0_-14px_50px_rgba(0,0,0,0.2)] outline-none ring-0 focus:outline-none focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-8 data-[state=closed]:slide-out-to-bottom-8 [&_button]:outline-none [&_button]:ring-0 [&_button:focus]:outline-none [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&>button]:hidden"
+        className="offers-bottom-sheet fixed bottom-0 left-1/2 top-auto z-50 grid max-h-[90dvh] w-full max-w-[540px] translate-x-[-50%] translate-y-0 gap-0 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[32px] rounded-b-none border-0 bg-[#f3f1ed] p-0 text-[#121212] shadow-[0_-14px_50px_rgba(0,0,0,0.2)] outline-none ring-0 focus:outline-none focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-8 data-[state=closed]:slide-out-to-bottom-8 [&_button]:outline-none [&_button]:ring-0 [&_button:focus]:outline-none [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&>button]:hidden"
       >
         <div
           className="overflow-hidden rounded-t-[32px] bg-[#252525] shadow-[0_12px_30px_rgba(0,0,0,0.16)] touch-pan-y"
