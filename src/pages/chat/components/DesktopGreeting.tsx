@@ -60,7 +60,13 @@ export const DesktopGreeting = (_: DesktopGreetingProps) => {
           >
             <h1
               data-greeting
-              className="font-display max-w-3xl text-center text-[24px] font-medium leading-snug tracking-[-0.02em] text-foreground md:text-[30px] lg:text-[34px]"
+              className="max-w-3xl text-center text-[26px] font-normal leading-snug tracking-[-0.01em] text-foreground md:text-[32px] lg:text-[36px]"
+              style={{
+                fontFamily:
+                  lang === "ar-eg"
+                    ? 'var(--font-arabic-ui-stack, "Readex Pro", "Cairo", system-ui, sans-serif)'
+                    : '"Instrument Serif", "ITC Garamond Std Narrow", Georgia, serif',
+              }}
             >
               {tagline}
             </h1>
