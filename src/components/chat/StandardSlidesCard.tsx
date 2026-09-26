@@ -115,7 +115,19 @@ const OilPreviewArtwork = ({ title, colors }: Pick<Props, "title" | "colors">) =
  */
 const FirstSlideThumb = ({ url, onFail }: { url: string; onFail: () => void }) => {
   const hostRef = useRef<HTMLDivElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [scale, setScale] = useState(0.4375);
+
+  useEffect(() => {
+    const node = wrapRef.current;
+    if (!node) return;
+    const measure = () => setScale(Math.max(0.1, node.clientWidth / 960));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
