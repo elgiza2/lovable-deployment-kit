@@ -1,7 +1,7 @@
 // Renders a generated PPTX presentation.
 // Uses pptx-preview to render real slide thumbnails fully client-side.
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Download, ArrowLeft, Loader2, Share2, RectangleVertical, RectangleHorizontal } from "lucide-react";
 import { toast } from "sonner";
