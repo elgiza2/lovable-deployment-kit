@@ -5,7 +5,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { MediaPlan, MediaPlanScene } from "@/components/chat/media/MediaPlanCard";
 import type { MediaSceneResult } from "@/components/chat/media/MediaResultCard";
-import { isUnlimitedMediaModel } from "@/lib/mediaQuota";
 import { getRunwayVideoPolicy } from "@/lib/runwayModelPolicy";
 
 // Every image model goes through the deployed media router (`anything-api`),
@@ -124,9 +123,11 @@ async function generateImageScene(
     : scene.reference_image_url
       ? [scene.reference_image_url]
       : [];
-  // A provider hiccup (503 / out-of-credit key) must never surface as a failed
-  // picture: retry the chosen model once, then walk the always-on fallbacks.
-  const attempts = [modelSlug, modelSlug, ...IMAGE_FALLBACK_SLUGS.filter((s) => s !== modelSlug)];
+  // Never silently replace a requested Runway image with another provider.
+  // Other models retain their existing fallback chain.
+  const attempts = modelSlug.startsWith("runway-") || modelSlug === "gen4_image_turbo"
+    ? [modelSlug]
+    : [modelSlug, ...IMAGE_FALLBACK_SLUGS.filter((s) => s !== modelSlug)];
   try {
     let lastErr: unknown = null;
     for (const slug of attempts) {
@@ -143,49 +144,6 @@ async function generateImageScene(
     throw lastErr instanceof Error ? lastErr : new Error("image gen failed");
   } finally {
     stopTicker();
-  }
-}
-
-/**
- * Reserves one video from the caller's monthly allowance. Enforced in the
- * database (`consume_video_quota`), so the UI cannot bypass it.
- */
-async function reserveVideoQuota(
-  modelSlug: string,
-): Promise<{ allowed: boolean; message: string }> {
-  try {
-    const unlimited = isUnlimitedMediaModel({ slug: modelSlug });
-    const { data: authData, error: authError } = await supabase.auth.getUser();
-    if (authError || !authData.user) {
-      return { allowed: false, message: "Sign in to generate videos." };
-    }
-    const { data, error } = await supabase.rpc("consume_video_quota", {
-      _model: modelSlug,
-      _unlimited: unlimited,
-      // Passing the third argument selects the user-aware overload explicitly.
-      // The database currently contains a legacy two-argument overload too,
-      // and omitting this field makes PostgREST report an ambiguous function.
-      _user_id: authData.user.id,
-    });
-    if (error) {
-      // Never hard-block on transient RPC failures for unlimited models.
-      if (unlimited) return { allowed: true, message: "" };
-      return { allowed: false, message: error.message || "Video quota check failed" };
-    }
-    const res = (data || {}) as { allowed?: boolean; error?: string; limit?: number };
-    if (res.allowed) return { allowed: true, message: "" };
-    if (res.error === "video_quota_exceeded") {
-      return {
-        allowed: false,
-        message: `You've used all ${res.limit ?? 0} videos in your monthly plan. Upgrade to keep generating.`,
-      };
-    }
-    return {
-      allowed: false,
-      message: res.error || "Video generation is not available on your plan.",
-    };
-  } catch {
-    return { allowed: false, message: "Video quota check failed" };
   }
 }
 
@@ -212,10 +170,8 @@ async function generateVideoScene(
   // is rendering. We surface a 5-minute countdown instead (see onCountdown).
   onPartial?.(scene.index, "", NaN);
 
-  // Server-side monthly video allowance (DeAPI models stay unlimited).
-  const quota = await reserveVideoQuota(modelSlug);
-  if (!quota.allowed) throw new Error(quota.message);
-
+  // The video service reserves the monthly allowance atomically. Do not
+  // consume it here as well or a single video costs two quota slots.
   try {
     const { data, error } = await supabase.functions.invoke("media-video", { body });
     if (error) {
