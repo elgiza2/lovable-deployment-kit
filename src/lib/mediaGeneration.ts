@@ -5,7 +5,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import type { MediaPlan, MediaPlanScene } from "@/components/chat/media/MediaPlanCard";
 import type { MediaSceneResult } from "@/components/chat/media/MediaResultCard";
-import { isUnlimitedMediaModel } from "@/lib/mediaQuota";
 import { getRunwayVideoPolicy } from "@/lib/runwayModelPolicy";
 
 // Every image model goes through the deployed media router (`anything-api`),
