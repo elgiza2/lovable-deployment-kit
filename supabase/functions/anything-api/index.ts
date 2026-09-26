@@ -459,12 +459,9 @@ async function runwayImageGenerate(opts: {
   images: string[];
   aspectRatio?: string;
 }): Promise<string> {
-  const ratio =
-    opts.aspectRatio === "9:16"
-      ? "768:1360"
-      : opts.aspectRatio === "16:9"
-        ? "1360:768"
-        : "1024:1024";
+  const ratio = opts.model === "gen4_image_turbo"
+    ? opts.aspectRatio === "9:16" ? "768:1360" : opts.aspectRatio === "16:9" ? "1360:768" : "1024:1024"
+    : opts.aspectRatio === "9:16" ? "1088:1920" : opts.aspectRatio === "16:9" ? "1920:1088" : "1920:1920";
   const body: Record<string, unknown> = {
     model: opts.model,
     promptText: opts.prompt,
