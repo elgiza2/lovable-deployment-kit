@@ -5,6 +5,7 @@
  */
 import { streamChat } from "@/lib/streamChat";
 import { DEFAULT_MODEL } from "@/lib/defaultModel";
+import { languageDirective } from "@/lib/languageDirective";
 
 async function ask(prompt: string, conversationId?: string | null): Promise<string> {
   let out = "";
