@@ -84,7 +84,7 @@ Deno.serve(async (request) => {
   const { data: job, error: jobError } = await db
     .from("pending_video_jobs")
     .select(
-      "id,user_id,provider,generation_id,api_key_id,status,video_url,refunded,credits_charged,model_slug",
+      "id,user_id,provider,generation_id,api_key_id,status,video_url,error,refunded,credits_charged,model_slug",
     )
     .eq("id", jobId)
     .eq("user_id", auth.user.id)

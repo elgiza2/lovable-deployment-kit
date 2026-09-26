@@ -37,6 +37,11 @@
 - React 19 nested-router warning removed by seeding browser history before React mounts.
 
 ## QA pass (September 2026)
+- [x] Runway image generation returned a real image via `anything-api`.
+- [x] Re-deployed Runway video creation and repaired the video polling deployment;
+  removed duplicate client-side video quota reservation.
+- [ ] Authenticated video generation and two Plus AI decks still need visual verification;
+  unauthenticated function calls cannot spend the test account's credits.
 - Seedance offer dialog: no focus ring on the CTA (`SeedanceOfferDialog.tsx`).
 - Computer surface: collapsed pill only, no reserved space, no duplicated status
   (`ComputerRunViewport.tsx`) — live status stays in the thinking badge above it.
