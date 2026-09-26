@@ -1804,6 +1804,8 @@ const ChatPage = () => {
         const { detectMediaIntent, detectImageEditIntent, pickDefaultMediaModel } =
           await import("@/lib/media/autoMediaIntent");
         let intent = detectMediaIntent(text);
+        // Video generation is hidden for now — never auto-route to video.
+        if (intent === "video") intent = null;
         if (!intent) {
           // A short follow-up like "now make the bicycle red" only means an edit
           // when this conversation already produced an image; otherwise it stays
