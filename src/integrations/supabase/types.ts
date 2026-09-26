@@ -7052,48 +7052,6 @@ export type Database = {
         }
         Relationships: []
       }
-      premium_day_offers: {
-        Row: {
-          active: boolean
-          created_at: string
-          created_by: string | null
-          email: string
-          expires_at: string
-          id: string
-          plan: string
-          starts_at: string
-          updated_at: string
-          user_id: string | null
-          video_limit: number
-        }
-        Insert: {
-          active?: boolean
-          created_at?: string
-          created_by?: string | null
-          email: string
-          expires_at: string
-          id?: string
-          plan?: string
-          starts_at?: string
-          updated_at?: string
-          user_id?: string | null
-          video_limit?: number
-        }
-        Update: {
-          active?: boolean
-          created_at?: string
-          created_by?: string | null
-          email?: string
-          expires_at?: string
-          id?: string
-          plan?: string
-          starts_at?: string
-          updated_at?: string
-          user_id?: string | null
-          video_limit?: number
-        }
-        Relationships: []
-      }
       premium_image_usage: {
         Row: {
           day: string
@@ -9227,72 +9185,6 @@ export type Database = {
         }
         Relationships: []
       }
-      telegram_admin_config: {
-        Row: {
-          id: boolean
-          password_hash: string
-          updated_at: string
-        }
-        Insert: {
-          id?: boolean
-          password_hash: string
-          updated_at?: string
-        }
-        Update: {
-          id?: boolean
-          password_hash?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      telegram_admin_sessions: {
-        Row: {
-          chat_id: number
-          created_at: string
-          verified_until: string
-        }
-        Insert: {
-          chat_id: number
-          created_at?: string
-          verified_until: string
-        }
-        Update: {
-          chat_id?: number
-          created_at?: string
-          verified_until?: string
-        }
-        Relationships: []
-      }
-      telegram_conversations: {
-        Row: {
-          created_at: string
-          id: string
-          model: string | null
-          telegram_chat_id: number | null
-          title: string
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          model?: string | null
-          telegram_chat_id?: number | null
-          title?: string
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          model?: string | null
-          telegram_chat_id?: number | null
-          title?: string
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       telegram_media: {
         Row: {
           cached_until: string | null
@@ -9356,176 +9248,6 @@ export type Database = {
           updated_at?: string
           user_id?: string | null
           width?: number | null
-        }
-        Relationships: []
-      }
-      telegram_messages: {
-        Row: {
-          content: string
-          conversation_id: string
-          created_at: string
-          id: string
-          metadata: Json
-          role: string
-          user_id: string
-        }
-        Insert: {
-          content?: string
-          conversation_id: string
-          created_at?: string
-          id?: string
-          metadata?: Json
-          role: string
-          user_id: string
-        }
-        Update: {
-          content?: string
-          conversation_id?: string
-          created_at?: string
-          id?: string
-          metadata?: Json
-          role?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "telegram_messages_conversation_id_fkey"
-            columns: ["conversation_id"]
-            isOneToOne: false
-            referencedRelation: "telegram_conversations"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      telegram_profiles: {
-        Row: {
-          created_at: string
-          first_name: string
-          is_premium: boolean
-          language_code: string | null
-          last_name: string | null
-          photo_url: string | null
-          referral_code: string | null
-          telegram_user_id: number
-          updated_at: string
-          user_id: string
-          username: string | null
-        }
-        Insert: {
-          created_at?: string
-          first_name?: string
-          is_premium?: boolean
-          language_code?: string | null
-          last_name?: string | null
-          photo_url?: string | null
-          referral_code?: string | null
-          telegram_user_id: number
-          updated_at?: string
-          user_id: string
-          username?: string | null
-        }
-        Update: {
-          created_at?: string
-          first_name?: string
-          is_premium?: boolean
-          language_code?: string | null
-          last_name?: string | null
-          photo_url?: string | null
-          referral_code?: string | null
-          telegram_user_id?: number
-          updated_at?: string
-          user_id?: string
-          username?: string | null
-        }
-        Relationships: []
-      }
-      telegram_referrals: {
-        Row: {
-          created_at: string
-          id: string
-          qualified_at: string | null
-          referral_code: string
-          referred_user_id: string
-          referrer_user_id: string
-          reward_units: number
-          rewarded_at: string | null
-          status: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          qualified_at?: string | null
-          referral_code: string
-          referred_user_id: string
-          referrer_user_id: string
-          reward_units?: number
-          rewarded_at?: string | null
-          status?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          qualified_at?: string | null
-          referral_code?: string
-          referred_user_id?: string
-          referrer_user_id?: string
-          reward_units?: number
-          rewarded_at?: string | null
-          status?: string
-        }
-        Relationships: []
-      }
-      telegram_task_drafts: {
-        Row: {
-          draft: Json
-          telegram_id: number
-          updated_at: string
-        }
-        Insert: {
-          draft?: Json
-          telegram_id: number
-          updated_at?: string
-        }
-        Update: {
-          draft?: Json
-          telegram_id?: number
-          updated_at?: string
-        }
-        Relationships: []
-      }
-      telegram_tasks: {
-        Row: {
-          action_label: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_active: boolean
-          sort_order: number
-          target_url: string
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          action_label?: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          sort_order?: number
-          target_url: string
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          action_label?: string
-          created_at?: string
-          id?: string
-          image_url?: string | null
-          is_active?: boolean
-          sort_order?: number
-          target_url?: string
-          title?: string
-          updated_at?: string
         }
         Relationships: []
       }
@@ -11365,16 +11087,7 @@ export type Database = {
         }
         Returns: string
       }
-      admin_dashboard_snapshot: { Args: never; Returns: Json }
       admin_grant_pro_monthly: { Args: { target_email: string }; Returns: Json }
-      admin_upsert_premium_day_offer: {
-        Args: {
-          duration_days?: number
-          target_email: string
-          video_limit?: number
-        }
-        Returns: Json
-      }
       assert_model_access: { Args: { _model_id: string }; Returns: Json }
       block_v0_key: {
         Args: { p_id: string; p_reason: string }
@@ -11475,7 +11188,6 @@ export type Database = {
           isSetofReturn: true
         }
       }
-      claim_telegram_referral: { Args: { p_code: string }; Returns: Json }
       cleanup_high_volume_tables: { Args: never; Returns: Json }
       cleanup_old_research_reports: { Args: never; Returns: undefined }
       cleanup_rate_limits: { Args: never; Returns: undefined }
@@ -11504,10 +11216,12 @@ export type Database = {
         Returns: Json
       }
       consume_premium_image: { Args: { p_user_id: string }; Returns: Json }
-      consume_video_quota: {
-        Args: { _model?: string; _unlimited?: boolean; _user_id?: string }
-        Returns: Json
-      }
+      consume_video_quota:
+        | {
+            Args: { _model?: string; _unlimited?: boolean; _user_id?: string }
+            Returns: Json
+          }
+        | { Args: { _model: string; _unlimited?: boolean }; Returns: Json }
       create_notification: {
         Args: {
           p_message: string
@@ -11567,7 +11281,6 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      ensure_telegram_referral_code: { Args: never; Returns: string }
       get_credit_overview: { Args: never; Returns: Json }
       get_integration_secret: {
         Args: {
@@ -11580,7 +11293,6 @@ export type Database = {
       }
       get_invite_details: { Args: { p_token: string }; Returns: Json }
       get_landing_page_prompt: { Args: { item_id: string }; Returns: string }
-      get_premium_day_offer: { Args: { p_user_id?: string }; Returns: Json }
       get_today_promo_slots: {
         Args: never
         Returns: {
@@ -11851,88 +11563,6 @@ export type Database = {
           o_id: string
           o_iv: string
         }[]
-      }
-      telegram_admin_add_task: {
-        Args: {
-          p_action_label: string
-          p_image_url: string
-          p_password: string
-          p_sort_order?: number
-          p_target_url: string
-          p_title: string
-        }
-        Returns: {
-          action_label: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_active: boolean
-          sort_order: number
-          target_url: string
-          title: string
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "telegram_tasks"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      telegram_admin_add_task_session: {
-        Args: {
-          p_action_label: string
-          p_chat_id: number
-          p_image_url: string
-          p_sort_order?: number
-          p_target_url: string
-          p_title: string
-        }
-        Returns: {
-          action_label: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_active: boolean
-          sort_order: number
-          target_url: string
-          title: string
-          updated_at: string
-        }
-        SetofOptions: {
-          from: "*"
-          to: "telegram_tasks"
-          isOneToOne: true
-          isSetofReturn: false
-        }
-      }
-      telegram_admin_is_verified: {
-        Args: { p_chat_id: number }
-        Returns: boolean
-      }
-      telegram_admin_list_tasks: {
-        Args: { p_password: string }
-        Returns: {
-          action_label: string
-          created_at: string
-          id: string
-          image_url: string | null
-          is_active: boolean
-          sort_order: number
-          target_url: string
-          title: string
-          updated_at: string
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "telegram_tasks"
-          isOneToOne: false
-          isSetofReturn: true
-        }
-      }
-      telegram_admin_verify: {
-        Args: { p_chat_id: number; p_password: string }
-        Returns: boolean
       }
       update_profile_safe: {
         Args: {

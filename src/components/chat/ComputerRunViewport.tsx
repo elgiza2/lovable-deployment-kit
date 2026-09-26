@@ -1,0 +1,72 @@
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
+import MegsyStar from "@/components/branding/MegsyStar";
+import { Button } from "@/components/ui/button";
+import { useUserLang } from "@/lib/authI18n";
+
+interface ComputerRunViewportProps {
+  url?: string | null;
+  poster?: string | null;
+  active?: boolean;
+  status?: string;
+}
+
+export default function ComputerRunViewport({
+  url,
+  poster,
+  active,
+  status,
+}: ComputerRunViewportProps) {
+  const [expanded, setExpanded] = useState(false);
+  const isArabic = useUserLang() === "ar-eg";
+
+  return (
+    <section
+      data-computer-viewport
+      className={`relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm transition-all duration-200 ${expanded ? "w-full" : "w-fit"}`}
+      aria-label="كومبيوتر ميغسي"
+    >
+      <Button
+        type="button"
+        onClick={() => setExpanded((value) => !value)}
+        variant="ghost"
+        className={`flex h-9 items-center gap-2 rounded-2xl border-0 px-3 text-start shadow-none hover:bg-foreground/[0.05] ${expanded ? "w-full rounded-b-none border-b" : "w-10 justify-center px-0"}`}
+        aria-expanded={expanded}
+      >
+        <MegsyStar
+          className={`h-3.5 w-3.5 shrink-0 text-[var(--megsy-gold)] ${active ? "motion-safe:animate-[spin_4s_linear_infinite]" : ""}`}
+        />
+        <span className={`${expanded ? "min-w-0 flex-1" : "sr-only"} truncate text-[11px] font-medium text-muted-foreground`}>
+          {status || (active ? (isArabic ? "كمبيوتر ميغسي يعمل الآن" : "Megsy computer is working") : isArabic ? "كمبيوتر ميغسي" : "Megsy computer")}
+        </span>
+        <ChevronDown
+          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+          aria-hidden
+        />
+      </Button>
+
+      {expanded && <div className="relative h-[min(52vh,420px)] w-full overflow-hidden bg-muted/20">
+        {url ? (
+          <iframe
+            src={url}
+            aria-label={isArabic ? "عرض كمبيوتر ميغسي" : "Megsy computer preview"}
+            className={`absolute inset-0 h-full w-full border-0 ${expanded ? "pointer-events-auto" : "pointer-events-none"}`}
+            allow="clipboard-read; clipboard-write"
+            sandbox="allow-scripts allow-same-origin allow-forms"
+          />
+        ) : poster ? (
+          <img src={poster} alt="آخر شاشة من كومبيوتر ميغسي" className="h-full w-full object-cover object-top" />
+        ) : (
+          <div className="absolute inset-0 grid place-items-center" aria-label="جاري تجهيز شاشة الكمبيوتر">
+            <div className="relative grid h-24 w-24 place-items-center">
+              <span className="absolute inset-0 rounded-full border border-primary/20 motion-safe:animate-[spin_4s_linear_infinite]" />
+              <span className="absolute inset-3 rounded-full border border-primary/20 border-t-primary/80 motion-safe:animate-[spin_2s_linear_infinite]" />
+              <MegsyStar className="h-7 w-7 text-[var(--megsy-gold)] motion-safe:animate-pulse" />
+            </div>
+          </div>
+        )}
+        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-foreground/[0.04]" />
+      </div>}
+    </section>
+  );
+}
