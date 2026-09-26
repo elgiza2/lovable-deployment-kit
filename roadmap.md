@@ -37,11 +37,11 @@
 - React 19 nested-router warning removed by seeding browser history before React mounts.
 
 ## QA pass (September 2026)
-- [ ] Verify a real Runway image via `anything-api` after correcting its required `referenceImages` field; the prior image was not verified as a Runway result.
+- [ ] Real Runway image and video verification blocked: both provider requests now return "You do not have enough credits to run this task". The test account's Megsy balance is separate from Runway's provider balance. Image request schema and aspect ratio were corrected; re-test after the Runway account is funded.
 - [x] Re-deployed Runway video creation and repaired the video polling deployment;
   removed duplicate client-side video quota reservation.
-- [ ] Authenticated video generation and two Plus AI decks still need visual verification;
-  unauthenticated function calls cannot spend the test account's credits.
+- [ ] Video output cannot be visually verified until Runway provider credits are restored; the service returns a 502 and refunds the app credits.
+- [ ] Plus AI provenance and PPTX output remain unverified: four authenticated `chat-slides-stream` jobs completed with `output.deck` rather than `output.standardSlides`/PPTX. Two contrasting templates produced some different layouts but identical stored palettes; chat applies the selected palette before display. Verify deployed provider integration and visual variety in actual chat decks.
 - Seedance offer dialog: no focus ring on the CTA (`SeedanceOfferDialog.tsx`).
 - Computer surface: collapsed pill only, no reserved space, no duplicated status
   (`ComputerRunViewport.tsx`) — live status stays in the thinking badge above it.
