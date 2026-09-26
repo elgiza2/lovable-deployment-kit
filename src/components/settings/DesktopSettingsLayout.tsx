@@ -13,6 +13,7 @@ import { useSidebarCollapsed } from "@/hooks/useSidebarCollapsed";
 import { translateExactText, useUserLang } from "@/lib/authI18n";
 import AppSidebar from "@/components/layout/AppSidebar";
 import {
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
   AccountIcon,
   WorkspacesIcon,
   BillingIcon,
@@ -97,13 +98,7 @@ export function DesktopSettingsLayout({
       confirmLabel: "Log out",
     });
     if (!ok) return;
-    try {
-      const { error } = await supabase.auth.signOut();
-      if (error) throw error;
-      navigate("/auth", { replace: true });
-    } catch (err) {
-      toast.error(sanitizeErrorMessage(err, "Could not sign out. Please try again."));
-    }
+    await signOutEverywhere();
   };
 
   const isActive = (path: string) => {

@@ -23,6 +23,7 @@ import ProfileGlassShell, {
   GlassRow,
 } from "@/components/profile/ProfileGlassShell";
 import { IOS26_ICONS } from "@/assets/ios26-icons";
+import { signOutEverywhere } from "@/lib/signOutEverywhere";
 
 const SecuritySettingsPage = () => {
   const navigate = useNavigate();
@@ -48,8 +49,7 @@ const SecuritySettingsPage = () => {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    await signOutEverywhere();
   };
 
   const goBack = () => navigate("/settings");
