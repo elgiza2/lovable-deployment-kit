@@ -142,7 +142,7 @@ export function DesktopSettingsLayout({
           <aside
             data-app-sidebar="true"
             className="theme-fixed relative z-40 hidden min-h-0 md:flex shrink-0 overflow-hidden border-e border-transparent"
-            style={{ width: 260, minWidth: 260, flexBasis: 260, backgroundColor: "transparent" }}
+            style={{ width: 320, minWidth: 320, flexBasis: 320, backgroundColor: "transparent" }}
           >
             <AppSidebar
               inline

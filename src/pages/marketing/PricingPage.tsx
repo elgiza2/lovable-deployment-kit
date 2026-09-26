@@ -444,7 +444,7 @@ const PricingPage = () => {
         {/* Desktop app sidebar — persistent on the left */}
         <aside
           data-chat-sidebar="true"
-          style={{ width: 260, minWidth: 260, flexBasis: 260 }}
+          style={{ width: 320, minWidth: 320, flexBasis: 320 }}
           className="hidden md:flex shrink-0 overflow-hidden border-e border-foreground/10 transition-[width] duration-200 ease-out"
         >
           <AppSidebar
