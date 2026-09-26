@@ -13,7 +13,33 @@
 // public.get_image_provider_key, then legacy public.api_keys.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { vaultKeys } from "../_shared/keyVault.ts";
+// Each Edge Function is bundled independently; keep its encrypted key lookup local.
+async function vaultKeys(provider: string): Promise<Array<{ key: string }>> {
+  const database = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+  const keys: Array<{ key: string }> = [];
+  const secret = Deno.env.get("KEY_VAULT_SECRET")?.trim();
+  if (secret) {
+    const { data } = await database.from("service_keys")
+      .select("key_cipher,key_iv").eq("provider", provider).eq("status", "active")
+      .order("last_used_at", { ascending: true, nullsFirst: true }).limit(25);
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(secret));
+    const aes = await crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["decrypt"]);
+    for (const row of data ?? []) {
+      try {
+        const plaintext = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: Uint8Array.from(atob(row.key_iv), (c) => c.charCodeAt(0)) },
+          aes, Uint8Array.from(atob(row.key_cipher), (c) => c.charCodeAt(0)),
+        );
+        keys.push({ key: new TextDecoder().decode(plaintext) });
+      } catch { /* Skip an undecryptable key. */ }
+    }
+  }
+  const { data: legacy } = await database.from("provider_api_keys")
+    .select("api_key").eq("provider", provider).eq("status", "active")
+    .order("last_used_at", { ascending: true, nullsFirst: true }).limit(25);
+  for (const row of legacy ?? []) if (row.api_key) keys.push({ key: row.api_key });
+  return keys;
+}
 
 const cors = {
   "Access-Control-Allow-Origin": "*",
