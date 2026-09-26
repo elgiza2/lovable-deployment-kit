@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { ChevronDown } from "lucide-react";
 import MegsyStar from "@/components/branding/MegsyStar";
-import { Button } from "@/components/ui/button";
 import { useUserLang } from "@/lib/authI18n";
 
 interface ComputerRunViewportProps {
@@ -11,6 +10,11 @@ interface ComputerRunViewportProps {
   status?: string;
 }
 
+/**
+ * Megsy computer surface. Collapsed it is a single quiet pill sized to its own
+ * label — it never reserves screen space and the actual screen only mounts once
+ * the user opens it.
+ */
 export default function ComputerRunViewport({
   url,
   poster,
@@ -20,53 +24,73 @@ export default function ComputerRunViewport({
   const [expanded, setExpanded] = useState(false);
   const isArabic = useUserLang() === "ar-eg";
 
+  const label =
+    status ||
+    (active
+      ? isArabic
+        ? "كمبيوتر ميغسي شغال"
+        : "Megsy computer is working"
+      : isArabic
+        ? "كمبيوتر ميغسي"
+        : "Megsy computer");
+
   return (
     <section
       data-computer-viewport
-      className={`relative overflow-hidden rounded-2xl border border-border/40 bg-card/40 shadow-sm transition-all duration-200 ${expanded ? "w-full" : "w-fit"}`}
-      aria-label="كومبيوتر ميغسي"
+      className={`relative ${expanded ? "w-full overflow-hidden rounded-2xl bg-foreground/[0.03]" : "w-fit"}`}
+      aria-label={isArabic ? "كمبيوتر ميغسي" : "Megsy computer"}
     >
-      <Button
+      <button
         type="button"
         onClick={() => setExpanded((value) => !value)}
-        variant="ghost"
-        className={`flex h-9 items-center gap-2 rounded-2xl border-0 px-3 text-start shadow-none hover:bg-foreground/[0.05] ${expanded ? "w-full rounded-b-none border-b" : "w-10 justify-center px-0"}`}
         aria-expanded={expanded}
+        className={`inline-flex h-8 max-w-full items-center gap-2 rounded-full bg-transparent px-2.5 text-start outline-none transition-colors hover:bg-foreground/[0.05] focus:outline-none focus-visible:outline-none ${
+          expanded ? "w-full rounded-b-none" : ""
+        }`}
       >
         <MegsyStar
           className={`h-3.5 w-3.5 shrink-0 text-[var(--megsy-gold)] ${active ? "motion-safe:animate-[spin_4s_linear_infinite]" : ""}`}
         />
-        <span className={`${expanded ? "min-w-0 flex-1" : "sr-only"} truncate text-[11px] font-medium text-muted-foreground`}>
-          {status || (active ? (isArabic ? "كمبيوتر ميغسي يعمل الآن" : "Megsy computer is working") : isArabic ? "كمبيوتر ميغسي" : "Megsy computer")}
+        <span className="min-w-0 flex-1 truncate text-[11.5px] font-medium text-muted-foreground">
+          {label}
         </span>
         <ChevronDown
-          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+          className={`h-3.5 w-3.5 shrink-0 text-muted-foreground/70 transition-transform duration-300 ${expanded ? "rotate-180" : ""}`}
+          strokeWidth={1.75}
           aria-hidden
         />
-      </Button>
+      </button>
 
-      {expanded && <div className="relative h-[min(52vh,420px)] w-full overflow-hidden bg-muted/20">
-        {url ? (
-          <iframe
-            src={url}
-            aria-label={isArabic ? "عرض كمبيوتر ميغسي" : "Megsy computer preview"}
-            className={`absolute inset-0 h-full w-full border-0 ${expanded ? "pointer-events-auto" : "pointer-events-none"}`}
-            allow="clipboard-read; clipboard-write"
-            sandbox="allow-scripts allow-same-origin allow-forms"
-          />
-        ) : poster ? (
-          <img src={poster} alt="آخر شاشة من كومبيوتر ميغسي" className="h-full w-full object-cover object-top" />
-        ) : (
-          <div className="absolute inset-0 grid place-items-center" aria-label="جاري تجهيز شاشة الكمبيوتر">
-            <div className="relative grid h-24 w-24 place-items-center">
-              <span className="absolute inset-0 rounded-full border border-primary/20 motion-safe:animate-[spin_4s_linear_infinite]" />
-              <span className="absolute inset-3 rounded-full border border-primary/20 border-t-primary/80 motion-safe:animate-[spin_2s_linear_infinite]" />
-              <MegsyStar className="h-7 w-7 text-[var(--megsy-gold)] motion-safe:animate-pulse" />
+      {expanded && (
+        <div className="relative h-[min(52vh,420px)] w-full overflow-hidden rounded-2xl rounded-t-none bg-muted/20">
+          {url ? (
+            <iframe
+              src={url}
+              aria-label={isArabic ? "عرض كمبيوتر ميغسي" : "Megsy computer preview"}
+              className="absolute inset-0 h-full w-full border-0"
+              allow="clipboard-read; clipboard-write"
+              sandbox="allow-scripts allow-same-origin allow-forms"
+            />
+          ) : poster ? (
+            <img
+              src={poster}
+              alt={isArabic ? "آخر شاشة من كمبيوتر ميغسي" : "Latest Megsy computer screen"}
+              className="h-full w-full object-cover object-top"
+            />
+          ) : (
+            <div
+              className="absolute inset-0 grid place-items-center"
+              aria-label={isArabic ? "جاري تجهيز الشاشة" : "Preparing the screen"}
+            >
+              <div className="relative grid h-24 w-24 place-items-center">
+                <span className="absolute inset-0 rounded-full border border-primary/20 motion-safe:animate-[spin_4s_linear_infinite]" />
+                <span className="absolute inset-3 rounded-full border border-primary/20 border-t-primary/80 motion-safe:animate-[spin_2s_linear_infinite]" />
+                <MegsyStar className="h-7 w-7 text-[var(--megsy-gold)] motion-safe:animate-pulse" />
+              </div>
             </div>
-          </div>
-        )}
-        <div className="pointer-events-none absolute inset-0 ring-1 ring-inset ring-foreground/[0.04]" />
-      </div>}
+          )}
+        </div>
+      )}
     </section>
   );
 }
