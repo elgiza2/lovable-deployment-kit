@@ -24,15 +24,10 @@ export default function ComputerRunViewport({
   const [expanded, setExpanded] = useState(false);
   const isArabic = useUserLang() === "ar-eg";
 
-  const label =
-    status ||
-    (active
-      ? isArabic
-        ? "كمبيوتر ميغسي شغال"
-        : "Megsy computer is working"
-      : isArabic
-        ? "كمبيوتر ميغسي"
-        : "Megsy computer");
+  // The live status belongs to the thinking badge higher up in the chat; the
+  // pill stays a fixed, quiet label so the same status is not printed twice.
+  const label = isArabic ? "كمبيوتر ميغسي" : "Megsy computer";
+  void status;
 
   return (
     <section
