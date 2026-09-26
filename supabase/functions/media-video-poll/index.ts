@@ -1,10 +1,45 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
-import {
-  vaultKeys,
-  noteKeyOk,
-  noteKeyFail,
-  providerError,
-} from "../media-video/_shared/keyVault.ts";
+
+// Keep the poller's key lookup inside this function's deployment bundle.
+// Supabase bundles each function separately and cannot resolve a sibling's files.
+type VaultKey = { id: string; key: string; table: "service_keys" | "provider_api_keys" };
+async function vaultKeys(provider: string): Promise<VaultKey[]> {
+  const keys: VaultKey[] = [];
+  const { data: encrypted } = await db.from("service_keys")
+    .select("id,key_cipher,key_iv").eq("provider", provider).eq("status", "active").limit(25);
+  const secret = Deno.env.get("KEY_VAULT_SECRET")?.trim();
+  if (secret) {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(secret));
+    const aes = await crypto.subtle.importKey("raw", digest, { name: "AES-GCM" }, false, ["decrypt"]);
+    for (const row of encrypted ?? []) {
+      try {
+        const plaintext = await crypto.subtle.decrypt(
+          { name: "AES-GCM", iv: Uint8Array.from(atob(row.key_iv), (c) => c.charCodeAt(0)) },
+          aes, Uint8Array.from(atob(row.key_cipher), (c) => c.charCodeAt(0)),
+        );
+        keys.push({ id: row.id, key: new TextDecoder().decode(plaintext), table: "service_keys" });
+      } catch { /* Ignore keys that cannot be decrypted. */ }
+    }
+  }
+  const { data: legacy } = await db.from("provider_api_keys")
+    .select("id,api_key").eq("provider", provider).eq("status", "active").limit(25);
+  for (const row of legacy ?? []) {
+    if (row.api_key) keys.push({ id: row.id, key: row.api_key, table: "provider_api_keys" });
+  }
+  return keys;
+}
+async function noteKeyOk(key: VaultKey) {
+  await db.from(key.table).update({ last_used_at: new Date().toISOString() }).eq("id", key.id);
+}
+async function noteKeyFail(key: VaultKey, message: string, status: number) {
+  const patch = status === 401 || status === 403
+    ? { status: "depleted", last_error: message.slice(0, 400) }
+    : { last_error: message.slice(0, 400) };
+  await db.from(key.table).update(patch).eq("id", key.id);
+}
+function providerError(status: number, body: string) {
+  return `Runway ${status}: ${body.slice(0, 400)}`;
+}
 
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
@@ -84,7 +119,7 @@ Deno.serve(async (request) => {
         .update({ status: "completed", video_url: videoUrl, updated_at: new Date().toISOString() })
         .eq("id", job.id)
         .eq("user_id", auth.user.id);
-      await noteKeyOk(key.id);
+      await noteKeyOk(key);
       return out({ status: "completed", video_url: videoUrl });
     }
     if (["failed", "error", "cancelled", "canceled"].includes(status)) {
