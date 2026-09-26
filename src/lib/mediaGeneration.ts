@@ -8,9 +8,10 @@ import type { MediaSceneResult } from "@/components/chat/media/MediaResultCard";
 import { isUnlimitedMediaModel } from "@/lib/mediaQuota";
 import { getRunwayVideoPolicy } from "@/lib/runwayModelPolicy";
 
-// Runway image generation is served by the dedicated compatibility function.
-// Gen-4 Image Turbo requires at least one reference image in Runway Dev.
-const IMAGE_FN = "media-image";
+// Every image model goes through the deployed media router (`anything-api`),
+// which resolves the slug to DeAPI / Renderful / Runway. The legacy
+// `media-image` function only understood Runway slugs and rejected the rest.
+const IMAGE_FN = "anything-api";
 
 // Video job pacing depends on the provider. Alibaba Wan runs ~5–6 min end
 // to end, so we show a visible countdown before polling. deAPI usually
@@ -53,7 +54,7 @@ function startProgressTicker(
 }
 
 /** Last-resort image models: always-available slugs tried when the chosen one fails. */
-const IMAGE_FALLBACK_SLUGS = ["deapi-image", "deapi-flux-schnell"];
+const IMAGE_FALLBACK_SLUGS = ["deapi-flux-schnell"];
 
 async function requestImage(
   scene: MediaPlanScene,
