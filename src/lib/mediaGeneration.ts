@@ -123,9 +123,11 @@ async function generateImageScene(
     : scene.reference_image_url
       ? [scene.reference_image_url]
       : [];
-  // A provider hiccup (503 / out-of-credit key) must never surface as a failed
-  // picture: retry the chosen model once, then walk the always-on fallbacks.
-  const attempts = [modelSlug, modelSlug, ...IMAGE_FALLBACK_SLUGS.filter((s) => s !== modelSlug)];
+  // Never silently replace a requested Runway image with another provider.
+  // Other models retain their existing fallback chain.
+  const attempts = modelSlug.startsWith("runway-") || modelSlug === "gen4_image_turbo"
+    ? [modelSlug]
+    : [modelSlug, ...IMAGE_FALLBACK_SLUGS.filter((s) => s !== modelSlug)];
   try {
     let lastErr: unknown = null;
     for (const slug of attempts) {

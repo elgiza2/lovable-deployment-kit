@@ -443,10 +443,8 @@ async function runwayImageGenerate(opts: {
     model: opts.model,
     promptText: opts.prompt,
     ratio,
+    referenceImages: opts.images.map((uri) => ({ uri })),
   };
-  if (opts.images.length) {
-    body.referenceImages = opts.images.map((uri) => ({ uri }));
-  }
   const response = await fetch("https://api.dev.runwayml.com/v1/text_to_image", {
     method: "POST",
     headers: {

@@ -37,7 +37,7 @@
 - React 19 nested-router warning removed by seeding browser history before React mounts.
 
 ## QA pass (September 2026)
-- [x] Runway image generation returned a real image via `anything-api`.
+- [ ] Verify a real Runway image via `anything-api` after correcting its required `referenceImages` field; the prior image was not verified as a Runway result.
 - [x] Re-deployed Runway video creation and repaired the video polling deployment;
   removed duplicate client-side video quota reservation.
 - [ ] Authenticated video generation and two Plus AI decks still need visual verification;
