@@ -3,6 +3,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useUserLang } from "@/lib/authI18n";
+import MegsyStar from "@/components/branding/MegsyStar";
 
 const SESSION_KEY = "megsy_offers_carousel_seen_v11";
 const AUTOPLAY_MS = 4200;
@@ -201,7 +202,7 @@ export default function SeedanceOfferDialog() {
                         color: `hsl(${current.accent})`,
                       }}
                     >
-                      <img src={current.iconImage} alt="" width={40} height={40} loading="lazy" draggable={false} className="h-8 w-8 object-contain" />
+                      <MegsyStar className="h-[18px] w-[18px]" />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
