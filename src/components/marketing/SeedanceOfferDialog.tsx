@@ -193,15 +193,15 @@ export default function SeedanceOfferDialog() {
 
           <div className="mt-6 flex items-center justify-center gap-1.5" dir="ltr">
             {OFFERS.map((offer, index) => (
-              <button
+              <div
                 key={offer.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 aria-label={offer.title}
                 onClick={() => go(index)}
-                className="flex h-6 !min-h-0 !min-w-0 items-center justify-center border-0 bg-transparent p-0 px-0.5"
-              >
-                <span className={`block h-1.5 rounded-full transition-all duration-300 ${index === activeIndex ? "w-6 bg-foreground" : "w-1.5 bg-foreground/20"}`} />
-              </button>
+                style={{ width: index === activeIndex ? 22 : 6, height: 6 }}
+                className={`cursor-pointer rounded-full transition-all duration-300 ${index === activeIndex ? "bg-foreground" : "bg-foreground/20"}`}
+              />
             ))}
           </div>
 
