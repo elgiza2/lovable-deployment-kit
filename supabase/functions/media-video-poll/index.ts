@@ -94,6 +94,7 @@ Deno.serve(async (request) => {
     return out({ status: "completed", video_url: job.video_url });
   if (job.status === "failed")
     return out({ status: "failed", error: job.error || "Video job failed." });
+  if (job.provider === "wavespeed") return pollWave(job, auth.user.id);
   if (job.provider !== "runway")
     return out({ status: "failed", error: "Only Runway video jobs are supported." }, 400);
 
@@ -155,3 +156,59 @@ Deno.serve(async (request) => {
     });
   }
 });
+
+async function pollWave(job: any, userId: string) {
+  const keys = await vaultKeys("wavespeed");
+  const key = keys.find((item) => item.id === job.api_key_id) || keys[0];
+  if (!key) return out({ status: "failed", error: "WaveSpeed API key is not configured." }, 503);
+  try {
+    const response = await fetch(
+      `https://api.wavespeed.ai/api/v3/predictions/${job.generation_id}/result`,
+      { headers: { Authorization: `Bearer ${key.key}` } },
+    );
+    const payload: any = await response.json().catch(() => null);
+    if (!response.ok) return out({ status: "processing" });
+    const data = payload?.data ?? payload;
+    const status = String(data?.status || "").toLowerCase();
+    if (["completed", "succeeded", "success"].includes(status)) {
+      const first = Array.isArray(data?.outputs) ? data.outputs[0] : null;
+      const videoUrl = firstVideoUrl(data?.outputs ?? data) || (typeof first === "string" ? first : null);
+      if (!videoUrl) throw new Error("WaveSpeed completed without a video URL");
+      await db
+        .from("pending_video_jobs")
+        .update({ status: "completed", video_url: videoUrl, updated_at: new Date().toISOString() })
+        .eq("id", job.id)
+        .eq("user_id", userId);
+      return out({ status: "completed", video_url: videoUrl });
+    }
+    if (["failed", "error", "cancelled", "canceled"].includes(status)) {
+      const message = String(data?.error || "WaveSpeed video task failed");
+      await db
+        .from("pending_video_jobs")
+        .update({ status: "failed", error: message, updated_at: new Date().toISOString() })
+        .eq("id", job.id)
+        .eq("user_id", userId);
+      if (!job.refunded && Number(job.credits_charged || 0) > 0) {
+        await db.rpc("grant_user_credits", {
+          p_user_id: userId,
+          p_amount: Number(job.credits_charged || 0),
+          p_action_type: "video_generation_refund",
+          p_description: `Refund for failed ${job.model_slug} task`,
+        });
+        await db
+          .from("pending_video_jobs")
+          .update({ refunded: true })
+          .eq("id", job.id)
+          .eq("user_id", userId)
+          .eq("refunded", false);
+      }
+      return out({ status: "failed", error: message });
+    }
+    return out({ status: "processing" });
+  } catch (error) {
+    return out({
+      status: "processing",
+      error: error instanceof Error ? error.message : "WaveSpeed polling failed",
+    });
+  }
+}

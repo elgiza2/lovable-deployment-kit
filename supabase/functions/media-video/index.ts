@@ -290,3 +290,109 @@ Deno.serve(async (request) => {
     attempted_keys: keys.length,
   });
 });
+
+async function handleWave(
+  userId: string,
+  model: string,
+  rule: WaveRule,
+  body: Record<string, unknown>,
+) {
+  const prompt = String(body.prompt || "").trim();
+  if (!prompt) return out({ error: true, message: "prompt is required" }, 400);
+  // Clamp to the model's limit instead of rejecting the request.
+  const duration = Math.min(rule.max, Math.max(1, Math.round(Number(body.duration) || rule.max)));
+  const keys = await vaultKeys("wavespeed");
+  if (!keys.length)
+    return out({ error: true, message: "No active WaveSpeed keys are configured." }, 503);
+
+  const quota = await db.rpc("consume_video_quota", {
+    _model: model,
+    _unlimited: false,
+    _user_id: userId,
+  });
+  if (quota.error || !quota.data?.allowed)
+    return out(
+      {
+        error: true,
+        paywall: true,
+        message:
+          quota.data?.message || quota.data?.error || quota.error?.message || "Video credits required.",
+      },
+      402,
+    );
+  const cost = quota.data.offer ? 0 : Math.max(Number(quota.data.cost || 0), rule.cost);
+  if (cost > 0) {
+    const spent = await db.rpc("spend_credits_auto", {
+      p_user_id: userId,
+      p_amount: cost,
+      p_action_type: "video_generation",
+      p_description: `${model} ${duration}s`,
+    });
+    if (spent.error || spent.data?.success === false)
+      return out(
+        { error: true, paywall: true, message: spent.data?.error || "Insufficient credits." },
+        402,
+      );
+  }
+
+  let lastError = "WaveSpeed request failed";
+  let selectedKey = keys[0];
+  let generationId: string | null = null;
+  for (const key of keys) {
+    selectedKey = key;
+    await noteKeyAttempt(key);
+    try {
+      generationId = await createWaveTask(
+        key.key,
+        rule,
+        prompt,
+        typeof body.start_frame === "string" ? body.start_frame : undefined,
+        duration,
+        typeof body.aspect_ratio === "string" ? body.aspect_ratio : undefined,
+      );
+      await noteKeyOk(key);
+      break;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : lastError;
+      const status = Number((error as any)?.providerStatus || 500);
+      await noteKeyFail(key, lastError, status);
+      // A 400 is a request problem, not a key problem: another key won't help.
+      if (status === 400) break;
+    }
+  }
+
+  const refund = async (why: string) => {
+    if (cost > 0)
+      await db.rpc("grant_user_credits", {
+        p_user_id: userId,
+        p_amount: cost,
+        p_action_type: "video_generation_refund",
+        p_description: `Refund for ${why} ${model} request`,
+      });
+  };
+  if (!generationId) {
+    await refund("failed");
+    return out({ error: true, message: lastError }, 502);
+  }
+  const { data: job, error: jobError } = await db
+    .from("pending_video_jobs")
+    .insert({
+      user_id: userId,
+      provider: "wavespeed",
+      model_slug: model,
+      generation_id: generationId,
+      api_key_id: selectedKey.id,
+      credits_charged: cost,
+      prompt,
+      duration_seconds: duration,
+      resolution: rule.resolution || null,
+      status: "pending",
+    })
+    .select("id")
+    .single();
+  if (jobError) {
+    await refund("untracked");
+    return out({ error: true, message: jobError.message }, 502);
+  }
+  return out({ job_id: job.id, provider: "wavespeed", model_slug: model, credits_charged: cost });
+}

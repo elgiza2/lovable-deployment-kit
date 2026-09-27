@@ -443,14 +443,14 @@ function alibabaRowToModelDetail(r: any): ModelDetail {
   } as ModelDetail;
 }
 
-// Runway Dev catalogue fallback; remote model tables remain authoritative.
-const RUNWAY_VIDEO_MODELS: Array<[string, string]> = [
-  ["gen4.5", "Gen-4.5"],
-  ["veo3.1", "Veo 3.1"],
-  ["seedance2_5", "Seedance 2.5"],
-  ["seedance2_mini", "Seedance 2.0 Mini"],
-  ["h3_max", "MiniMax H3"],
-  ["gemini_omni_flash", "Gemini Omni Flash 1.1"],
+// Video catalogue now served by WaveSpeedAI (see media-video edge function).
+const WAVESPEED_VIDEO_MODELS: Array<[string, string]> = [
+  ["wavespeed-minimax-h3", "MiniMax H3"],
+  ["wavespeed-seedance-2.0-mini", "Seedance 2.5"],
+  ["wavespeed-openvideo", "OpenVideo"],
+  ["wavespeed-seedance-1.5-pro", "Seedance 1.5 Pro"],
+  ["wavespeed-hailuo-2.3", "Hailuo 2.3"],
+  ["wavespeed-grok-imagine-1.5", "Grok Imagine 1.5"],
 ];
 const RUNWAY_IMAGE_MODELS: Array<[string, string]> = [
   ["gpt_image_2_5_flare", "GPT Image 2.5 Flare"],
