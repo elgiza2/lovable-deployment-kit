@@ -3,21 +3,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useUserLang } from "@/lib/authI18n";
-import {
-  Sparkles, Zap, Crown,
-  Globe, MousePointerClick, CheckCircle2,
-  Target, Bot, ListChecks,
-  type LucideIcon,
-} from "lucide-react";
 
-const SESSION_KEY = "megsy_offers_carousel_seen_v10";
+const SESSION_KEY = "megsy_offers_carousel_seen_v11";
 const AUTOPLAY_MS = 4200;
 
-type OfferFeature = { icon: LucideIcon; title: string; titleAr: string; sub: string; subAr: string };
+type OfferFeature = { title: string; titleAr: string; sub: string; subAr: string };
 
 type Offer = {
   id: string;
   image: string;
+  iconImage: string;
   title: string;
   titleAr: string;
   body: string;
@@ -30,43 +25,46 @@ const OFFERS: Offer[] = [
   {
     id: "gpt_25",
     image: "/offer-gpt-25.jpg",
+    iconImage: "/offer-icon-gpt.png",
     accent: "222 89% 56%",
     title: "GPT 2.5 Unlimited",
     titleAr: "GPT 2.5 بلا حدود",
     body: "Use our flagship model without limits for a full month.",
     bodyAr: "استخدم أقوى نماذجنا بلا حدود لمدة شهر كامل.",
     features: [
-      { icon: Sparkles, title: "Unlimited chats", titleAr: "محادثات بلا حدود", sub: "No message caps for a full month", subAr: "بدون حدود للرسائل لمدة شهر كامل" },
-      { icon: Zap, title: "Faster responses", titleAr: "ردود أسرع", sub: "Priority speed on every request", subAr: "سرعة أعلى في كل طلب" },
-      { icon: Crown, title: "Priority access", titleAr: "أولوية الوصول", sub: "New models reach you first", subAr: "النماذج الجديدة توصلك الأول" },
+      { title: "Unlimited chats", titleAr: "محادثات بلا حدود", sub: "No message caps for a full month", subAr: "بدون حدود للرسائل لمدة شهر كامل" },
+      { title: "Faster responses", titleAr: "ردود أسرع", sub: "Priority speed on every request", subAr: "سرعة أعلى في كل طلب" },
+      { title: "Priority access", titleAr: "أولوية الوصول", sub: "New models reach you first", subAr: "النماذج الجديدة توصلك الأول" },
     ],
   },
   {
     id: "computer",
     image: "/offer-computer-25.jpg",
+    iconImage: "/offer-icon-computer.png",
     accent: "162 72% 38%",
     title: "Megsy Computer",
     titleAr: "ميغسي كومبيوتر",
     body: "Let Megsy browse, click, research and get work done for you.",
     bodyAr: "خلّي ميغسي يتصفح ويبحث وينفذ المهام بدلًا منك.",
     features: [
-      { icon: Globe, title: "Browses the web for you", titleAr: "يتصفح الويب بدلًا منك", sub: "Opens sites and gathers what you need", subAr: "يفتح المواقع ويجمع اللي محتاجه" },
-      { icon: MousePointerClick, title: "Clicks and types", titleAr: "يضغط ويكتب", sub: "Fills forms and completes steps", subAr: "يملأ النماذج ويكمّل الخطوات" },
-      { icon: CheckCircle2, title: "Delivers finished work", titleAr: "يسلّم شغل مكتمل", sub: "Research, files and results ready", subAr: "بحث وملفات ونتائج جاهزة" },
+      { title: "Browses the web for you", titleAr: "يتصفح الويب بدلًا منك", sub: "Opens sites and gathers what you need", subAr: "يفتح المواقع ويجمع اللي محتاجه" },
+      { title: "Clicks and types", titleAr: "يضغط ويكتب", sub: "Fills forms and completes steps", subAr: "يملأ النماذج ويكمّل الخطوات" },
+      { title: "Delivers finished work", titleAr: "يسلّم شغل مكتمل", sub: "Research, files and results ready", subAr: "بحث وملفات ونتائج جاهزة" },
     ],
   },
   {
     id: "agent",
     image: "/offer-agent-25.jpg",
+    iconImage: "/offer-icon-agent.png",
     accent: "268 84% 60%",
     title: "Megsy Agent",
     titleAr: "وكيل ميغسي",
     body: "Turn complex goals into finished work with an autonomous AI agent.",
     bodyAr: "حوّل المهام المعقدة إلى شغل مكتمل مع وكيل ذكاء اصطناعي مستقل.",
     features: [
-      { icon: Target, title: "Turns goals into plans", titleAr: "يحوّل أهدافك لخطط", sub: "Breaks big tasks into clear steps", subAr: "يقسّم المهام الكبيرة لخطوات واضحة" },
-      { icon: Bot, title: "Works autonomously", titleAr: "يشتغل بشكل مستقل", sub: "Keeps going until the job is done", subAr: "يكمّل لوحده لحد ما الشغل يخلص" },
-      { icon: ListChecks, title: "Finishes complex tasks", titleAr: "ينهي المهام المعقدة", sub: "Multi-step work, handled end to end", subAr: "شغل متعدد الخطوات من الأول للآخر" },
+      { title: "Turns goals into plans", titleAr: "يحوّل أهدافك لخطط", sub: "Breaks big tasks into clear steps", subAr: "يقسّم المهام الكبيرة لخطوات واضحة" },
+      { title: "Works autonomously", titleAr: "يشتغل بشكل مستقل", sub: "Keeps going until the job is done", subAr: "يكمّل لوحده لحد ما الشغل يخلص" },
+      { title: "Finishes complex tasks", titleAr: "ينهي المهام المعقدة", sub: "Multi-step work, handled end to end", subAr: "شغل متعدد الخطوات من الأول للآخر" },
     ],
   },
 ];
@@ -95,6 +93,16 @@ export default function SeedanceOfferDialog() {
     const timer = window.setInterval(() => { setDir(1); setActiveIndex((index) => (index + 1) % OFFERS.length); }, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
   }, [open]);
+
+  // Preload the next slide's image and icon while the current one is showing
+  useEffect(() => {
+    if (!open) return;
+    const next = OFFERS[(activeIndex + 1) % OFFERS.length];
+    for (const src of [next.image, next.iconImage]) {
+      const img = new Image();
+      img.src = src;
+    }
+  }, [open, activeIndex]);
 
   const dismiss = () => {
     try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* storage unavailable */ }
@@ -193,7 +201,7 @@ export default function SeedanceOfferDialog() {
                         color: `hsl(${current.accent})`,
                       }}
                     >
-                      <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
+                      <img src={current.iconImage} alt="" width={40} height={40} loading="lazy" draggable={false} className="h-8 w-8 object-contain" />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
