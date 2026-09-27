@@ -691,37 +691,23 @@ select {
   caret-color: var(--ink-1) !important;
 }
 
+/* Base composer frame — keeps layout primitives only. The canonical visual
+   surface (border / radius / shadow) lives in styles/deferred.css so there is
+   exactly one source of truth for the composer card look. */
 .chat-composer-frame {
   position: relative;
   isolation: isolate;
-  border: 1px solid hsl(var(--foreground) / 0.24) !important;
-  background: hsl(var(--card)) !important;
-  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.08) !important;
   min-height: 0;
-  border-radius: 1.1rem !important;
+  border: 1px solid hsl(var(--foreground) / 0.22);
+  background: hsl(var(--card));
+  box-shadow: 0 8px 30px hsl(var(--foreground) / 0.08);
+  border-radius: 26px;
 }
 
 [data-theme="dark"] .chat-composer-frame {
-  border-color: hsl(0 0% 100% / 0.12) !important;
-  background: hsl(0 0% 8%) !important;
-  box-shadow: none !important;
-}
-
-
-@media (min-width: 768px) {
-  .chat-composer-frame {
-    border: 1px solid hsl(var(--border) / 0.75) !important;
-    background: hsl(var(--card)) !important;
-    min-height: auto;
-    border-radius: 1.35rem !important;
-    box-shadow: 0 10px 28px hsl(var(--foreground) / 0.1) !important;
-  }
-
-  [data-theme="dark"] .chat-composer-frame {
-    background: hsl(var(--background)) !important;
-    border-color: hsl(var(--border) / 0.9) !important;
-    box-shadow: 0 10px 28px hsl(0 0% 0% / 0.42) !important;
-  }
+  border-color: hsl(0 0% 100% / 0.14);
+  background: hsl(0 0% 8%);
+  box-shadow: 0 8px 30px hsl(0 0% 0% / 0.4);
 }
 
 /* Fancy button background for sidebar user section */
