@@ -94,6 +94,16 @@ export default function SeedanceOfferDialog() {
     return () => window.clearInterval(timer);
   }, [open]);
 
+  // Preload the next slide's image and icon while the current one is showing
+  useEffect(() => {
+    if (!open) return;
+    const next = OFFERS[(activeIndex + 1) % OFFERS.length];
+    for (const src of [next.image, next.iconImage]) {
+      const img = new Image();
+      img.src = src;
+    }
+  }, [open, activeIndex]);
+
   const dismiss = () => {
     try { sessionStorage.setItem(SESSION_KEY, "1"); } catch { /* storage unavailable */ }
     setOpen(false);
@@ -191,7 +201,7 @@ export default function SeedanceOfferDialog() {
                         color: `hsl(${current.accent})`,
                       }}
                     >
-                      <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
+                      <img src={current.iconImage} alt="" width={40} height={40} loading="lazy" draggable={false} className="h-8 w-8 object-contain" />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
