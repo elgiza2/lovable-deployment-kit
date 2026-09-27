@@ -17,10 +17,11 @@ const out = (body: unknown, status = 200) =>
     headers: { ...cors, "Content-Type": "application/json" },
   });
 
+// Lowest quality tier (cheapest Runway credits).
 function ratio(aspect?: string) {
-  if (aspect === "9:16") return "768:1360";
-  if (aspect === "16:9") return "1360:768";
-  return "1024:1024";
+  if (aspect === "9:16") return "720:1280";
+  if (aspect === "16:9") return "1280:720";
+  return "720:720";
 }
 function firstImage(value: unknown, depth = 0): string | null {
   if (depth > 6 || value == null) return null;
