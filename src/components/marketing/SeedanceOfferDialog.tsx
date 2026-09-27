@@ -90,7 +90,7 @@ export default function SeedanceOfferDialog() {
           <button type="button" onClick={(event) => { event.currentTarget.blur(); tryNow(); }} className="mt-6 h-[54px] w-full rounded-full bg-gradient-to-r from-[#f40b79] via-[#f32948] to-[#ff6b1f] !text-white shadow-[0_8px_20px_rgba(243,34,91,0.18)] transition hover:brightness-105 active:scale-[0.985] focus:outline-none focus-visible:outline-none">
             <span className="!text-white">{isArabic ? "جرّب الآن" : "Try now"}</span>
           </button>
-          <button type="button" onClick={dismiss} className="mt-3 w-full text-[15px] font-medium text-[#d0443a] transition hover:text-[#a52e28]">{isArabic ? "لاحقًا" : "Later"}</button>
+          <button type="button" onPointerDown={(event) => { event.preventDefault(); dismiss(); }} onClick={dismiss} className="mt-3 w-full text-[15px] font-medium text-[#d0443a] transition hover:text-[#a52e28]">{isArabic ? "لاحقًا" : "Later"}</button>
         </div>
       </DialogContent>
     </Dialog>
