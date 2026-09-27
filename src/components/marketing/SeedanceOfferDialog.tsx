@@ -122,6 +122,7 @@ export default function SeedanceOfferDialog() {
       <DialogContent
         dir={isArabic ? "rtl" : "ltr"}
         onOpenAutoFocus={(event) => event.preventDefault()}
+        overlayClassName="hidden"
         className="offers-bottom-sheet fixed bottom-0 left-1/2 top-auto z-50 block max-h-[92dvh] w-full max-w-[520px] translate-x-[-50%] translate-y-0 overflow-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[28px] rounded-b-none !border-0 bg-background p-0 text-foreground shadow-[0_-18px_60px_hsl(var(--foreground)/0.18)] !outline-none !ring-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-8 data-[state=closed]:slide-out-to-bottom-8 [&_button]:outline-none [&>button]:hidden"
       >
         {/* Full-bleed image — no frame or border above it */}
