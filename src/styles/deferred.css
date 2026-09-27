@@ -2037,6 +2037,11 @@ svg {
   --chat-reference-bg: var(--chat-claude-bg);
 }
 
+html.light [data-shell="megsy"][data-skin="claude"] {
+  --border: 340 12% 86%;
+  --input: 340 12% 88%;
+}
+
 @media (max-width: 767.98px) {
   [data-shell="megsy"][data-skin="claude"] {
     --chat-claude-bg: hsl(var(--background));
