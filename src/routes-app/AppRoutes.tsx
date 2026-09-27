@@ -1,4 +1,5 @@
 import { Route, Navigate } from "react-router-dom";
+import WelcomePage from "@/pages/WelcomePage";
 import {
   LegacyToolsRedirect,
   LegacyAiRedirect,
@@ -87,6 +88,7 @@ export const AppRoutes = ({ currentUserId }: { currentUserId: string | null }) =
     {/* ── Entry ──────────────────────────────────────────────── */}
     <Route path="/" element={<ChatPage />} />
     <Route path="/chat" element={<ChatPage />} />
+    <Route path="/welcome" element={<WelcomePage />} />
     <Route path="/index" element={<ChatPage />} />
     <Route path="/share/:shareId" element={<SharedChatPage />} />
 

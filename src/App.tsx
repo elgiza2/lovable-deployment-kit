@@ -1,5 +1,5 @@
 import { useEffect, useState, Suspense } from "react";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useNavigate, useLocation } from "react-router-dom";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CostConfirmationHost } from "@/components/billing/CostConfirmationHost";
@@ -32,7 +32,6 @@ import { AppRoutes } from "@/routes-app/AppRoutes";
 import { applyTheme } from "@/lib/theme";
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { loadTikTokPixel, trackTikTokFunnelEvent } from "@/lib/analytics/tiktokPixel";
-import SeedanceOfferDialog from "@/components/marketing/SeedanceOfferDialog";
 
 /** Watches background jobs / agent runs and notifies the user when they finish. */
 const BackgroundJobNotifier = lazyWithRetry(
@@ -204,7 +203,7 @@ const App = () => {
                   <ConfirmProvider>
                     <ScrollToTop />
                     <PageViewTracker />
-                    <SeedanceOfferDialog />
+                    <WelcomeGate userId={currentUserId} />
                     <InternalLinkInterceptor />
                     <MarketingTypographyScope />
 
@@ -250,3 +249,22 @@ const App = () => {
 };
 
 export default App;
+
+function WelcomeGate({ userId }: { userId: string | null }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    if (userId) return;
+    if (location.pathname !== "/" && location.pathname !== "/chat") return;
+    const t = window.setTimeout(async () => {
+      try {
+        if (localStorage.getItem("megsy_welcome_seen_v1")) return;
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) navigate("/welcome", { replace: true });
+      } catch { /* ignore */ }
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [userId, location.pathname, navigate]);
+  return null;
+}
