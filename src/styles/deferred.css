@@ -2064,44 +2064,40 @@ svg {
   }
 }
 
-/* Composer frame + mobile mode chips — one exact color surface, no borders */
-.chat-composer-frame,
-[data-theme="dark"] .chat-composer-frame,
-.mode-chip-btn,
-[data-chips-row] button {
+/* Composer frame + mobile mode chips — one clean card surface.
+   Single canonical rule: soft card background, visible hairline border,
+   gentle shadow. No other file should strip these back off. */
+.chat-composer-frame {
   background: var(--chat-claude-composer) !important;
-  border: 0 !important;
+  border: 1px solid hsl(var(--foreground) / 0.22) !important;
+  border-radius: 26px !important;
+  box-shadow: 0 8px 30px hsl(var(--foreground) / 0.08) !important;
   backdrop-filter: none !important;
-  box-shadow: none !important;
   color: var(--chat-claude-fg);
 }
 
-.chat-composer-frame,
-[data-theme="dark"] .chat-composer-frame {
-  border-radius: 24px !important;
+[data-theme="dark"] .chat-composer-frame,
+html.dark .chat-composer-frame {
+  border-color: hsl(0 0% 100% / 0.14) !important;
+  box-shadow: 0 8px 30px hsl(0 0% 0% / 0.4) !important;
 }
 
 .mode-chip-btn,
 [data-chips-row] button {
+  background: var(--chat-claude-composer) !important;
+  border: 1px solid hsl(var(--foreground) / 0.14) !important;
   border-radius: 9999px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  color: var(--chat-claude-fg);
 }
 
 .mode-chip-btn[aria-pressed="true"],
 [data-chips-row] button[aria-pressed="true"] {
   background: var(--chat-claude-control) !important;
-  border: 0 !important;
+  border-color: hsl(var(--foreground) / 0.22) !important;
   color: var(--chat-claude-fg) !important;
   box-shadow: none !important;
-}
-@media (min-width: 768px) {
-  .chat-composer-frame,
-  [data-theme="dark"] .chat-composer-frame {
-    background: var(--chat-claude-composer) !important;
-    border: 0 !important;
-    border-radius: 24px !important;
-    box-shadow: none !important;
-    backdrop-filter: none !important;
-  }
 }
 .chat-composer-frame textarea {
   color: var(--neo-text) !important;
