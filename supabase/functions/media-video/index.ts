@@ -37,6 +37,64 @@ const rules: Record<string, Rule> = {
   "runway-gemini-omni-flash-1.1": { max: 10, resolutions: ["720p"], durations: [5, 10], cost: 180 },
 };
 
+// WaveSpeedAI catalogue. `path` is the model path; "/text-to-video" or
+// "/image-to-video" is appended unless explicit t2v/i2v paths are given.
+type WaveRule = {
+  path: string;
+  t2v?: string;
+  i2v?: string;
+  max: number;
+  resolution?: string;
+  cost: number;
+};
+const waveRules: Record<string, WaveRule> = {
+  "wavespeed-minimax-h3": { path: "wavespeed-ai/minimax-h3", max: 10, resolution: "768p", cost: 200 },
+  // Shown to users as "Seedance 2.5".
+  "wavespeed-seedance-2.0-mini": { path: "bytedance/seedance-2.0-mini", max: 5, resolution: "720p", cost: 120 },
+  "wavespeed-openvideo": { path: "wavespeed-ai/openvideo", max: 10, resolution: "720p", cost: 120 },
+  "wavespeed-seedance-1.5-pro": { path: "bytedance/seedance-v1.5-pro", max: 5, resolution: "720p", cost: 140 },
+  "wavespeed-hailuo-2.3": {
+    path: "minimax/hailuo-2.3",
+    t2v: "minimax/hailuo-2.3/t2v-standard",
+    i2v: "minimax/hailuo-2.3/i2v-standard",
+    max: 6,
+    cost: 140,
+  },
+  "wavespeed-grok-imagine-1.5": { path: "x-ai/grok-imagine-video-1.5", max: 10, cost: 160 },
+};
+
+async function createWaveTask(
+  key: string,
+  rule: WaveRule,
+  prompt: string,
+  image: string | undefined,
+  duration: number,
+  aspectRatio: string | undefined,
+) {
+  const path = image
+    ? rule.i2v || `${rule.path}/image-to-video`
+    : rule.t2v || `${rule.path}/text-to-video`;
+  const body: Record<string, unknown> = { prompt, duration };
+  if (rule.resolution) body.resolution = rule.resolution;
+  if (image) body.image = image;
+  else if (aspectRatio) body.aspect_ratio = aspectRatio;
+  const response = await fetch(`https://api.wavespeed.ai/api/v3/${path}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = await response.text();
+  if (!response.ok) {
+    const error = new Error(`WaveSpeed ${response.status}: ${text.slice(0, 400)}`);
+    (error as any).providerStatus = response.status;
+    throw error;
+  }
+  const result = JSON.parse(text);
+  const id = result?.data?.id ?? result?.id;
+  if (!id) throw new Error("WaveSpeed returned no task id");
+  return String(id);
+}
+
 function ratio(aspectRatio?: string) {
   if (aspectRatio === "9:16") return "720:1280";
   if (aspectRatio === "1:1") return "720:720";
