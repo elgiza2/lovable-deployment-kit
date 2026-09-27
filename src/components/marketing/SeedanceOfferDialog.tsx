@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useUserLang } from "@/lib/authI18n";
@@ -9,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-const SESSION_KEY = "megsy_offers_carousel_seen_v6";
+const SESSION_KEY = "megsy_offers_carousel_seen_v7";
 const AUTOPLAY_MS = 4200;
 
 type OfferFeature = { icon: LucideIcon; title: string; titleAr: string; sub: string; subAr: string };
@@ -87,7 +88,7 @@ export default function SeedanceOfferDialog() {
 
   useEffect(() => {
     if (!open) return;
-    const timer = window.setInterval(() => setActiveIndex((index) => (index + 1) % OFFERS.length), AUTOPLAY_MS);
+    const timer = window.setInterval(() => { setDir(1); setActiveIndex((index) => (index + 1) % OFFERS.length); }, AUTOPLAY_MS);
     return () => window.clearInterval(timer);
   }, [open]);
 
@@ -105,91 +106,119 @@ export default function SeedanceOfferDialog() {
   const move = (direction: 1 | -1) => setActiveIndex((index) => (index + direction + OFFERS.length) % OFFERS.length);
   const current = OFFERS[activeIndex];
 
+  const [dir, setDir] = useState<1 | -1>(1);
+  const go = (index: number) => { setDir(index > activeIndex ? 1 : -1); setActiveIndex(index); };
+  const slide = {
+    enter: (d: number) => ({ opacity: 0, x: d * 36 }),
+    center: { opacity: 1, x: 0 },
+    exit: (d: number) => ({ opacity: 0, x: d * -36 }),
+  };
+
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => (nextOpen ? setOpen(true) : dismiss())}>
       <DialogContent
         dir={isArabic ? "rtl" : "ltr"}
         onOpenAutoFocus={(event) => event.preventDefault()}
-        className="offers-bottom-sheet fixed bottom-0 left-1/2 top-auto z-50 grid max-h-[92dvh] w-full max-w-[540px] translate-x-[-50%] translate-y-0 gap-0 overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[28px] rounded-b-none border-0 bg-white p-0 text-[#121212] shadow-[0_-14px_50px_rgba(0,0,0,0.22)] outline-none ring-0 focus:outline-none focus-visible:outline-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-8 data-[state=closed]:slide-out-to-bottom-8 [&_button]:outline-none [&_button]:ring-0 [&_button:focus]:outline-none [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-0 [&>button]:hidden"
+        className="offers-bottom-sheet fixed bottom-0 left-1/2 top-auto z-50 block max-h-[92dvh] w-full max-w-[520px] translate-x-[-50%] translate-y-0 overflow-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden rounded-t-[28px] rounded-b-none !border-0 bg-background p-0 text-foreground shadow-[0_-18px_60px_hsl(var(--foreground)/0.18)] !outline-none !ring-0 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-bottom-8 data-[state=closed]:slide-out-to-bottom-8 [&_button]:outline-none [&>button]:hidden"
       >
-        {/* drag handle */}
-        <div className="mx-auto mt-2.5 h-1.5 w-12 shrink-0 rounded-full bg-[#e4e2dd]" />
-
-        {/* image banner */}
+        {/* Full-bleed image — no frame or border above it */}
         <div
-          className="px-4 pt-3 touch-pan-y"
+          className="relative aspect-[5/3] w-full overflow-hidden bg-foreground touch-pan-y"
           onPointerDown={(event) => { touchStartX.current = event.clientX; }}
           onPointerUp={(event) => {
             if (touchStartX.current === null) return;
             const delta = event.clientX - touchStartX.current;
-            if (Math.abs(delta) > 42) move(delta > 0 ? -1 : 1);
+            if (Math.abs(delta) > 42) { const d = delta > 0 ? -1 : 1; setDir(d); move(d); }
             touchStartX.current = null;
           }}
         >
-          <img
-            key={current.image}
-            src={current.image}
-            alt={isArabic ? current.titleAr : current.title}
-            loading="lazy"
-            width={1280}
-            height={640}
-            className="block h-[170px] w-full rounded-2xl object-cover sm:h-[210px]"
-          />
+          <AnimatePresence initial={false} custom={dir} mode="popLayout">
+            <motion.img
+              key={current.image}
+              src={current.image}
+              alt={isArabic ? current.titleAr : current.title}
+              width={1280}
+              height={768}
+              draggable={false}
+              custom={dir}
+              initial={{ opacity: 0, scale: 1.06 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+              className="absolute inset-0 h-full w-full select-none object-cover"
+            />
+          </AnimatePresence>
+          <div className="absolute inset-x-0 top-2.5 mx-auto h-1 w-10 rounded-full bg-background/70" />
         </div>
 
-        <div className="px-6 pb-7 pt-5 sm:px-9">
-          <div className="text-center">
-            <DialogTitle className="text-[22px] font-bold tracking-tight sm:text-[26px]">
-              {isArabic ? current.titleAr : current.title}
-            </DialogTitle>
-            <DialogDescription className="mx-auto mt-1.5 max-w-[430px] text-[14px] leading-6 text-[#6f6b70] sm:text-[15px]">
-              {isArabic ? current.bodyAr : current.body}
-            </DialogDescription>
-          </div>
+        <div className="px-6 pb-7 pt-5 sm:px-8">
+          <AnimatePresence initial={false} custom={dir} mode="wait">
+            <motion.div
+              key={current.id}
+              custom={dir}
+              variants={slide}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <DialogTitle className="text-center text-[22px] font-bold tracking-tight">
+                {isArabic ? current.titleAr : current.title}
+              </DialogTitle>
+              <DialogDescription className="mx-auto mt-1.5 max-w-[400px] text-center text-[14px] leading-6 text-muted-foreground">
+                {isArabic ? current.bodyAr : current.body}
+              </DialogDescription>
 
-          {/* feature rows */}
-          <div className="mt-5 flex flex-col gap-4">
-            {current.features.map((feature) => (
-              <div key={feature.title} className="flex items-start gap-3.5">
-                <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f1efeb] text-[#121212]">
-                  <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.8} />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[14.5px] font-semibold leading-5">{isArabic ? feature.titleAr : feature.title}</span>
-                  <span className="mt-0.5 block text-[13px] leading-5 text-[#8a8589]">{isArabic ? feature.subAr : feature.sub}</span>
-                </span>
-              </div>
-            ))}
-          </div>
+              <ul className="mt-5 flex flex-col gap-3.5">
+                {current.features.map((feature, i) => (
+                  <motion.li
+                    key={feature.title}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.06 * i + 0.08, duration: 0.3 }}
+                    className="flex items-center gap-3.5"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
+                      <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block text-[14.5px] font-semibold leading-5">{isArabic ? feature.titleAr : feature.title}</span>
+                      <span className="block text-[13px] leading-5 text-muted-foreground">{isArabic ? feature.subAr : feature.sub}</span>
+                    </span>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          </AnimatePresence>
 
-          {/* carousel dots */}
-          <div className="mt-5 flex items-center justify-center gap-1.5" dir="ltr">
+          <div className="mt-6 flex items-center justify-center gap-1.5" dir="ltr">
             {OFFERS.map((offer, index) => (
-              <button
+              <div
                 key={offer.id}
-                type="button"
+                role="button"
+                tabIndex={0}
                 aria-label={offer.title}
-                onClick={() => setActiveIndex(index)}
-                className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-5 bg-[#121212]" : "w-1.5 bg-[#d8d5d0]"}`}
+                onClick={() => go(index)}
+                style={{ width: index === activeIndex ? 22 : 6, height: 6 }}
+                className={`cursor-pointer rounded-full transition-all duration-300 ${index === activeIndex ? "bg-foreground" : "bg-foreground/20"}`}
               />
             ))}
           </div>
 
-          {/* actions — Later (gray) then Try now (blue), matching the reference sheet */}
+          <button
+            type="button"
+            onClick={(event) => { event.currentTarget.blur(); tryNow(); }}
+            className="btn-sunset mt-5 h-[52px] w-full text-[15px] font-bold"
+          >
+            {isArabic ? "جرّب الآن" : "Try now"}
+          </button>
           <button
             type="button"
             onPointerDown={(event) => { event.preventDefault(); dismiss(); }}
             onClick={dismiss}
-            className="mt-5 h-[52px] w-full rounded-full bg-[#f1efeb] text-[15px] font-semibold text-[#121212] transition hover:bg-[#e8e5e0] active:scale-[0.985]"
+            className="mt-2 h-11 w-full rounded-full text-[14px] font-semibold text-muted-foreground transition hover:text-foreground"
           >
             {isArabic ? "لاحقًا" : "Later"}
-          </button>
-          <button
-            type="button"
-            onClick={(event) => { event.currentTarget.blur(); tryNow(); }}
-            className="mt-2.5 h-[52px] w-full rounded-full bg-[#1a73e8] text-[15px] font-semibold !text-white shadow-[0_8px_20px_rgba(26,115,232,0.25)] transition hover:bg-[#1765cc] active:scale-[0.985]"
-          >
-            <span className="!text-white">{isArabic ? "جرّب الآن" : "Try now"}</span>
           </button>
         </div>
       </DialogContent>
