@@ -203,7 +203,7 @@ const App = () => {
                   <ConfirmProvider>
                     <ScrollToTop />
                     <PageViewTracker />
-                    <WelcomeGate userId={currentUserId} />
+                    <WelcomeGate />
                     <InternalLinkInterceptor />
                     <MarketingTypographyScope />
 
