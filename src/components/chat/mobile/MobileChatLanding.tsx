@@ -103,6 +103,7 @@ const CHIP_ICONS: Record<LandingChipId, React.ComponentType<{ className?: string
 
 export const DEFAULT_LANDING_CHIPS: LandingChip[] = [
   { id: "image", label: "Images" },
+  { id: "video", label: "Video" },
   { id: "website", label: "Website" },
 ];
 

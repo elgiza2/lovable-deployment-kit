@@ -459,8 +459,9 @@ async function runwayImageGenerate(opts: {
   images: string[];
   aspectRatio?: string;
 }): Promise<string> {
+  // Lowest quality tier each model accepts (cheapest Runway credits).
   const ratio = opts.model === "gen4_image_turbo"
-    ? opts.aspectRatio === "9:16" ? "768:1360" : opts.aspectRatio === "16:9" ? "1360:768" : "1024:1024"
+    ? opts.aspectRatio === "9:16" ? "720:1280" : opts.aspectRatio === "16:9" ? "1280:720" : "720:720"
     : opts.aspectRatio === "9:16" ? "1088:1920" : opts.aspectRatio === "16:9" ? "1920:1088" : "1920:1920";
   const body: Record<string, unknown> = {
     model: opts.model,

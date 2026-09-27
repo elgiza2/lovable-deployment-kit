@@ -37,6 +37,64 @@ const rules: Record<string, Rule> = {
   "runway-gemini-omni-flash-1.1": { max: 10, resolutions: ["720p"], durations: [5, 10], cost: 180 },
 };
 
+// WaveSpeedAI catalogue. `path` is the model path; "/text-to-video" or
+// "/image-to-video" is appended unless explicit t2v/i2v paths are given.
+type WaveRule = {
+  path: string;
+  t2v?: string;
+  i2v?: string;
+  max: number;
+  resolution?: string;
+  cost: number;
+};
+const waveRules: Record<string, WaveRule> = {
+  "wavespeed-minimax-h3": { path: "wavespeed-ai/minimax-h3", max: 10, resolution: "768p", cost: 200 },
+  // Shown to users as "Seedance 2.5".
+  "wavespeed-seedance-2.0-mini": { path: "bytedance/seedance-2.0-mini", max: 5, resolution: "720p", cost: 120 },
+  "wavespeed-openvideo": { path: "wavespeed-ai/openvideo", max: 10, resolution: "720p", cost: 120 },
+  "wavespeed-seedance-1.5-pro": { path: "bytedance/seedance-v1.5-pro", max: 5, resolution: "720p", cost: 140 },
+  "wavespeed-hailuo-2.3": {
+    path: "minimax/hailuo-2.3",
+    t2v: "minimax/hailuo-2.3/t2v-standard",
+    i2v: "minimax/hailuo-2.3/i2v-standard",
+    max: 6,
+    cost: 140,
+  },
+  "wavespeed-grok-imagine-1.5": { path: "x-ai/grok-imagine-video-1.5", max: 10, cost: 160 },
+};
+
+async function createWaveTask(
+  key: string,
+  rule: WaveRule,
+  prompt: string,
+  image: string | undefined,
+  duration: number,
+  aspectRatio: string | undefined,
+) {
+  const path = image
+    ? rule.i2v || `${rule.path}/image-to-video`
+    : rule.t2v || `${rule.path}/text-to-video`;
+  const body: Record<string, unknown> = { prompt, duration };
+  if (rule.resolution) body.resolution = rule.resolution;
+  if (image) body.image = image;
+  else if (aspectRatio) body.aspect_ratio = aspectRatio;
+  const response = await fetch(`https://api.wavespeed.ai/api/v3/${path}`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const text = await response.text();
+  if (!response.ok) {
+    const error = new Error(`WaveSpeed ${response.status}: ${text.slice(0, 400)}`);
+    (error as any).providerStatus = response.status;
+    throw error;
+  }
+  const result = JSON.parse(text);
+  const id = result?.data?.id ?? result?.id;
+  if (!id) throw new Error("WaveSpeed returned no task id");
+  return String(id);
+}
+
 function ratio(aspectRatio?: string) {
   if (aspectRatio === "9:16") return "720:1280";
   if (aspectRatio === "1:1") return "720:720";
@@ -100,7 +158,9 @@ Deno.serve(async (request) => {
   if (!user)
     return out({ error: true, paywall: true, message: "Sign in to generate videos." }, 401);
 
-  const model = String(body.model_slug || "runway-gen4.5");
+  const model = String(body.model_slug || "wavespeed-minimax-h3");
+  const wave = waveRules[model];
+  if (wave) return handleWave(user.id, model, wave, body);
   const rule = rules[model];
   if (!rule) return out({ error: true, message: "Choose a supported Runway video model." }, 400);
   const duration = Number(body.duration || rule.durations[0]);
@@ -230,3 +290,109 @@ Deno.serve(async (request) => {
     attempted_keys: keys.length,
   });
 });
+
+async function handleWave(
+  userId: string,
+  model: string,
+  rule: WaveRule,
+  body: Record<string, unknown>,
+) {
+  const prompt = String(body.prompt || "").trim();
+  if (!prompt) return out({ error: true, message: "prompt is required" }, 400);
+  // Clamp to the model's limit instead of rejecting the request.
+  const duration = Math.min(rule.max, Math.max(1, Math.round(Number(body.duration) || rule.max)));
+  const keys = await vaultKeys("wavespeed");
+  if (!keys.length)
+    return out({ error: true, message: "No active WaveSpeed keys are configured." }, 503);
+
+  const quota = await db.rpc("consume_video_quota", {
+    _model: model,
+    _unlimited: false,
+    _user_id: userId,
+  });
+  if (quota.error || !quota.data?.allowed)
+    return out(
+      {
+        error: true,
+        paywall: true,
+        message:
+          quota.data?.message || quota.data?.error || quota.error?.message || "Video credits required.",
+      },
+      402,
+    );
+  const cost = quota.data.offer ? 0 : Math.max(Number(quota.data.cost || 0), rule.cost);
+  if (cost > 0) {
+    const spent = await db.rpc("spend_credits_auto", {
+      p_user_id: userId,
+      p_amount: cost,
+      p_action_type: "video_generation",
+      p_description: `${model} ${duration}s`,
+    });
+    if (spent.error || spent.data?.success === false)
+      return out(
+        { error: true, paywall: true, message: spent.data?.error || "Insufficient credits." },
+        402,
+      );
+  }
+
+  let lastError = "WaveSpeed request failed";
+  let selectedKey = keys[0];
+  let generationId: string | null = null;
+  for (const key of keys) {
+    selectedKey = key;
+    await noteKeyAttempt(key);
+    try {
+      generationId = await createWaveTask(
+        key.key,
+        rule,
+        prompt,
+        typeof body.start_frame === "string" ? body.start_frame : undefined,
+        duration,
+        typeof body.aspect_ratio === "string" ? body.aspect_ratio : undefined,
+      );
+      await noteKeyOk(key);
+      break;
+    } catch (error) {
+      lastError = error instanceof Error ? error.message : lastError;
+      const status = Number((error as any)?.providerStatus || 500);
+      await noteKeyFail(key, lastError, status);
+      // A 400 is a request problem, not a key problem: another key won't help.
+      if (status === 400) break;
+    }
+  }
+
+  const refund = async (why: string) => {
+    if (cost > 0)
+      await db.rpc("grant_user_credits", {
+        p_user_id: userId,
+        p_amount: cost,
+        p_action_type: "video_generation_refund",
+        p_description: `Refund for ${why} ${model} request`,
+      });
+  };
+  if (!generationId) {
+    await refund("failed");
+    return out({ error: true, message: lastError }, 502);
+  }
+  const { data: job, error: jobError } = await db
+    .from("pending_video_jobs")
+    .insert({
+      user_id: userId,
+      provider: "wavespeed",
+      model_slug: model,
+      generation_id: generationId,
+      api_key_id: selectedKey.id,
+      credits_charged: cost,
+      prompt,
+      duration_seconds: duration,
+      resolution: rule.resolution || null,
+      status: "pending",
+    })
+    .select("id")
+    .single();
+  if (jobError) {
+    await refund("untracked");
+    return out({ error: true, message: jobError.message }, 502);
+  }
+  return out({ job_id: job.id, provider: "wavespeed", model_slug: model, credits_charged: cost });
+}

@@ -21,7 +21,18 @@ const POLICIES: Record<string, RunwayVideoPolicy> = {
 
 const normalize = (value: string) => value.toLowerCase().replace(/^runway[-_]/, "").replace(/[-\s]/g, "_");
 
+// WaveSpeedAI limits (enforced again in the media-video edge function).
+const WAVESPEED_POLICIES: Record<string, RunwayVideoPolicy> = {
+  "wavespeed-minimax-h3": { maxDuration: 10 },
+  "wavespeed-seedance-2.0-mini": { maxDuration: 5, resolution: "720p" },
+  "wavespeed-openvideo": { maxDuration: 10, resolution: "720p" },
+  "wavespeed-seedance-1.5-pro": { maxDuration: 5, resolution: "720p" },
+  "wavespeed-hailuo-2.3": { maxDuration: 6 },
+  "wavespeed-grok-imagine-1.5": { maxDuration: 10 },
+};
+
 export function getRunwayVideoPolicy(slug: string): RunwayVideoPolicy | null {
+  if (WAVESPEED_POLICIES[slug]) return WAVESPEED_POLICIES[slug];
   const key = normalize(slug);
   const exact = POLICIES[key];
   if (exact) return exact;

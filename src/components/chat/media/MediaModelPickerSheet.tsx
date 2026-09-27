@@ -44,6 +44,7 @@ interface Props {
 const modelKey = (model: any) => `${model?.slug || model?.id || ""} ${model?.name || ""}`.toLowerCase();
 
 function englishModelName(model: any): string {
+  if (model?.provider === "wavespeed") return String(model.name);
   const key = modelKey(model);
   if (/gpt[\s_-]*image[\s_-]*2[._ -]*5.*flare/i.test(key)) return "GPT Image 2.5 Flare";
   if (/gpt[\s_-]*image[\s_-]*2[._ -]*5.*sunburst/i.test(key)) return "GPT Image 2.5 Sunburst";
@@ -68,7 +69,7 @@ const IMAGE_ORDER = [
   "Nano Banana 2", "Seedream 5 Lite", "Seedream 5.0 Pro",
   "Grok Image", "Grok Imagine Image 2", "Gen-4 Image Turbo",
 ];
-const VIDEO_ORDER = ["Sora 2", "Seedance 2.5", "Seedance 2", "Veo 3.1", "Gen-4.5"];
+const VIDEO_ORDER = ["MiniMax H3", "Seedance 2.5", "OpenVideo", "Seedance 1.5 Pro", "Hailuo 2.3", "Grok Imagine 1.5"];
 
 export default function MediaModelPickerSheet({ open, onOpenChange, mode, selectedSlug, onSelect }: Props) {
   const { models, loading, error, reload } = useDynamicModels();
@@ -88,7 +89,7 @@ export default function MediaModelPickerSheet({ open, onOpenChange, mode, select
       return (aRank < 0 ? 999 : aRank) - (bRank < 0 ? 999 : bRank) || aName.localeCompare(bName);
     });
     const unique = sorted.filter((model, index, list) => list.findIndex((candidate) => englishModelName(candidate) === englishModelName(model)) === index);
-    return mode === "video" ? unique.slice(0, 5) : unique;
+    return unique;
   }, [models, mode]);
 
   return (

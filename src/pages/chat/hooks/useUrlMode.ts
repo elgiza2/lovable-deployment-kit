@@ -13,6 +13,7 @@ const ALLOWED_URL_MODES: ChatMode[] = [
   "slides",
   "slides-images",
   "images",
+  "video",
   "operator",
 ];
 

@@ -12,6 +12,7 @@ const IMAGE_ALLOW_PATTERNS: RegExp[] = [
   /gen[\s_-]*4[._ -]*image[\s_-]*turbo/i,
 ];
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const VIDEO_ALLOW_PATTERNS: RegExp[] = [
   /sora[\s_-]*2\b/i,
   /seedance[\s_-]*2(?:[._ -]?5)?\b/i,
@@ -32,6 +33,7 @@ export function filterImageModels<T>(models: T[]): T[] {
   return models.filter(isAllowedImageModel);
 }
 
+/** Video is served only by WaveSpeedAI; other catalogue rows are hidden. */
 export function filterVideoModels<T>(models: T[]): T[] {
-  return models.filter((model) => !/megsy/i.test(key(model)) && VIDEO_ALLOW_PATTERNS.some((re) => re.test(key(model))));
+  return models.filter((model: any) => model?.provider === "wavespeed");
 }
