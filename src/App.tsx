@@ -29,6 +29,7 @@ import {
   InternalLinkInterceptor,
 } from "@/routes-app/routeHelpers";
 import { AppRoutes } from "@/routes-app/AppRoutes";
+import { WELCOME_SEEN_KEY } from "@/pages/WelcomePage";
 import { applyTheme } from "@/lib/theme";
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { loadTikTokPixel, trackTikTokFunnelEvent } from "@/lib/analytics/tiktokPixel";

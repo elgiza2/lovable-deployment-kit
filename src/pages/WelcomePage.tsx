@@ -36,11 +36,17 @@ export default function WelcomePage() {
     });
   }, []);
 
-  const finish = () => {
+  const finish = async () => {
     try { localStorage.setItem(WELCOME_SEEN_KEY, "1"); } catch { /* ignore */ }
-    navigate("/auth", { replace: true });
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getSession();
+      navigate(data.session ? "/" : "/auth", { replace: true });
+    } catch {
+      navigate("/auth", { replace: true });
+    }
   };
-  const next = () => (i < slides.length - 1 ? setI(i + 1) : finish());
+  const next = () => (i < slides.length - 1 ? setI(i + 1) : void finish());
 
   const s = slides[i];
   const ease = [0.22, 1, 0.36, 1] as const;
