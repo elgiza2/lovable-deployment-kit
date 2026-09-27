@@ -3,21 +3,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 import { useUserLang } from "@/lib/authI18n";
-import {
-  Sparkles, Zap, Crown,
-  Globe, MousePointerClick, CheckCircle2,
-  Target, Bot, ListChecks,
-  type LucideIcon,
-} from "lucide-react";
 
-const SESSION_KEY = "megsy_offers_carousel_seen_v10";
+const SESSION_KEY = "megsy_offers_carousel_seen_v11";
 const AUTOPLAY_MS = 4200;
 
-type OfferFeature = { icon: LucideIcon; title: string; titleAr: string; sub: string; subAr: string };
+type OfferFeature = { title: string; titleAr: string; sub: string; subAr: string };
 
 type Offer = {
   id: string;
   image: string;
+  iconImage: string;
   title: string;
   titleAr: string;
   body: string;
