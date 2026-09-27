@@ -22,6 +22,7 @@ type Offer = {
   titleAr: string;
   body: string;
   bodyAr: string;
+  accent: string; // hsl triple for icon chip tint, e.g. "222 89% 56%"
   features: OfferFeature[];
 };
 
@@ -29,6 +30,7 @@ const OFFERS: Offer[] = [
   {
     id: "gpt_25",
     image: "/offer-gpt-25.jpg",
+    accent: "222 89% 56%",
     title: "GPT 2.5 Unlimited",
     titleAr: "GPT 2.5 بلا حدود",
     body: "Use our flagship model without limits for a full month.",
@@ -42,6 +44,7 @@ const OFFERS: Offer[] = [
   {
     id: "computer",
     image: "/offer-computer-25.jpg",
+    accent: "162 72% 38%",
     title: "Megsy Computer",
     titleAr: "ميغسي كومبيوتر",
     body: "Let Megsy browse, click, research and get work done for you.",
@@ -55,6 +58,7 @@ const OFFERS: Offer[] = [
   {
     id: "agent",
     image: "/offer-agent-25.jpg",
+    accent: "268 84% 60%",
     title: "Megsy Agent",
     titleAr: "وكيل ميغسي",
     body: "Turn complex goals into finished work with an autonomous AI agent.",
