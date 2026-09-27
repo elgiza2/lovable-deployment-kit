@@ -694,9 +694,9 @@ select {
 .chat-composer-frame {
   position: relative;
   isolation: isolate;
-  border: 1px solid hsl(var(--foreground) / 0.15) !important;
-  background: hsl(var(--foreground) / 0.05) !important;
-  box-shadow: none !important;
+  border: 1px solid hsl(var(--foreground) / 0.24) !important;
+  background: hsl(var(--card)) !important;
+  box-shadow: 0 4px 16px hsl(var(--foreground) / 0.08) !important;
   min-height: 0;
   border-radius: 1.1rem !important;
 }
