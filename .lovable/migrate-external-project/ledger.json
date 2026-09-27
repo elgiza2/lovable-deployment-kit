@@ -6,8 +6,8 @@
       "capability": "Chat light-theme presentation",
       "source": "old repository CSS and chat components",
       "outcome": "reuse only the proven visual rules while preserving current chat behavior",
-      "status": "in_progress",
-      "next_action": "compare and apply the minimal visual differences, then verify mobile and desktop"
+      "status": "migrated",
+      "next_action": "verify mobile and desktop light theme while preserving the dark theme"
     },
     {
       "capability": "Backend, authentication, records, integrations, and routes",

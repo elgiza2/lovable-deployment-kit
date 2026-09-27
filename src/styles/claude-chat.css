@@ -316,8 +316,8 @@
   /* Plus menu sizing (glass handled by shared recipe) */
   [data-skin="claude"] [data-plus-menu] {
     margin-left: 0.5rem !important;
-    width: min(360px, calc(100vw - 24px)) !important;
-    max-height: min(64vh, 520px) !important;
+    width: 300px !important;
+    max-height: min(52vh, 430px) !important;
     color: #ECECEC !important;
     border-radius: 16px !important;
     padding: 0.35rem !important;
@@ -343,13 +343,13 @@
     background: var(--overlay-white-06) !important;
   }
 
-  /* Center greeting — clean modern sans */
+  /* Center greeting — original Megsy serif treatment. */
   [data-skin="claude"] h1[data-greeting] {
-    font-family: 'Space Grotesk', 'Inter', system-ui, -apple-system, sans-serif !important;
-    font-weight: 600 !important;
-    letter-spacing: -0.03em !important;
-    font-size: 40px !important;
-    line-height: 1.15 !important;
+    font-family: 'Instrument Serif', 'Source Serif 4', Georgia, ui-serif, serif !important;
+    font-weight: 400 !important;
+    letter-spacing: -0.015em !important;
+    font-size: 64px !important;
+    line-height: 1.05 !important;
     /* Token-based so the greeting stays readable in the light theme too. */
     color: hsl(var(--foreground)) !important;
     transform: none !important;
@@ -358,8 +358,8 @@
     -webkit-font-smoothing: antialiased;
   }
   [data-skin="claude"] h1[data-greeting] span {
-    color: hsl(var(--foreground)) !important;
-    font-style: normal;
+    color: #E08968 !important;
+    font-style: italic;
   }
 
 
@@ -794,36 +794,3 @@ html[data-theme="dark"] [data-skin="claude"] [data-plus-trigger]:hover {
   }
 }
 
-/* Final media activation chip treatment: clear, high-contrast, and easy to
- * tap on mobile instead of reading like a hidden text strip. */
-[data-skin="claude"] .composer-card [data-media-service-panel],
-[data-skin="claude"] .composer-card [data-media-service-panel] button {
-  min-height: 36px !important;
-}
-[data-skin="claude"] .composer-card [data-media-service-panel] {
-  background: linear-gradient(135deg, hsl(var(--primary) / .12), hsl(var(--primary) / .04)) !important;
-  border: 1px solid hsl(var(--primary) / .22) !important;
-  border-radius: 14px !important;
-  padding: 3px 5px 3px 10px !important;
-  color: hsl(var(--foreground)) !important;
-}
-[data-skin="claude"] .composer-card [data-media-service-panel] button:hover {
-  background: hsl(var(--primary) / .12) !important;
-}
-[data-skin="claude"] [data-chips-row] {
-  gap: 8px !important;
-  padding: 2px 1px 8px !important;
-}
-[data-skin="claude"] [data-chips-row] button {
-  min-height: 34px !important;
-  border-radius: 999px !important;
-  padding: 0 13px !important;
-  font-weight: 600 !important;
-  letter-spacing: -.01em;
-}
-[data-skin="claude"] [data-chips-row] button[aria-pressed="true"] {
-  background: hsl(var(--primary) / .16) !important;
-  border: 1px solid hsl(var(--primary) / .38) !important;
-  color: hsl(var(--primary)) !important;
-  box-shadow: 0 6px 18px -10px hsl(var(--primary) / .8) !important;
-}

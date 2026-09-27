@@ -59,8 +59,7 @@ Consequences:
 
 ## 4. Front-end rules
 
-- Colors/gradients/shadows come from design tokens in `src/styles.css`. No
-  `text-white` / `bg-[#hex]` in components.
+- Light chat visuals follow `loving-bonds-app`; keep dark-chat styling independent.
 - Language is English + Egyptian Arabic (`ar-eg`) via `useUserLang()`. Never
   hard-code Arabic or English strings in a shared component.
 - Page snapshots: the pre-hydration snapshot paints into a separate
