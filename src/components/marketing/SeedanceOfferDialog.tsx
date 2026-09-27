@@ -32,9 +32,9 @@ const OFFERS: Offer[] = [
     body: "Use our flagship model without limits for a full month.",
     bodyAr: "استخدم أقوى نماذجنا بلا حدود لمدة شهر كامل.",
     features: [
-      { icon: Sparkles, title: "Unlimited chats", titleAr: "محادثات بلا حدود", sub: "No message caps for a full month", subAr: "بدون حدود للرسائل لمدة شهر كامل" },
-      { icon: Zap, title: "Faster responses", titleAr: "ردود أسرع", sub: "Priority speed on every request", subAr: "سرعة أعلى في كل طلب" },
-      { icon: Crown, title: "Priority access", titleAr: "أولوية الوصول", sub: "New models reach you first", subAr: "النماذج الجديدة توصلك الأول" },
+      { title: "Unlimited chats", titleAr: "محادثات بلا حدود", sub: "No message caps for a full month", subAr: "بدون حدود للرسائل لمدة شهر كامل" },
+      { title: "Faster responses", titleAr: "ردود أسرع", sub: "Priority speed on every request", subAr: "سرعة أعلى في كل طلب" },
+      { title: "Priority access", titleAr: "أولوية الوصول", sub: "New models reach you first", subAr: "النماذج الجديدة توصلك الأول" },
     ],
   },
   {
@@ -47,9 +47,9 @@ const OFFERS: Offer[] = [
     body: "Let Megsy browse, click, research and get work done for you.",
     bodyAr: "خلّي ميغسي يتصفح ويبحث وينفذ المهام بدلًا منك.",
     features: [
-      { icon: Globe, title: "Browses the web for you", titleAr: "يتصفح الويب بدلًا منك", sub: "Opens sites and gathers what you need", subAr: "يفتح المواقع ويجمع اللي محتاجه" },
-      { icon: MousePointerClick, title: "Clicks and types", titleAr: "يضغط ويكتب", sub: "Fills forms and completes steps", subAr: "يملأ النماذج ويكمّل الخطوات" },
-      { icon: CheckCircle2, title: "Delivers finished work", titleAr: "يسلّم شغل مكتمل", sub: "Research, files and results ready", subAr: "بحث وملفات ونتائج جاهزة" },
+      { title: "Browses the web for you", titleAr: "يتصفح الويب بدلًا منك", sub: "Opens sites and gathers what you need", subAr: "يفتح المواقع ويجمع اللي محتاجه" },
+      { title: "Clicks and types", titleAr: "يضغط ويكتب", sub: "Fills forms and completes steps", subAr: "يملأ النماذج ويكمّل الخطوات" },
+      { title: "Delivers finished work", titleAr: "يسلّم شغل مكتمل", sub: "Research, files and results ready", subAr: "بحث وملفات ونتائج جاهزة" },
     ],
   },
   {
@@ -62,9 +62,9 @@ const OFFERS: Offer[] = [
     body: "Turn complex goals into finished work with an autonomous AI agent.",
     bodyAr: "حوّل المهام المعقدة إلى شغل مكتمل مع وكيل ذكاء اصطناعي مستقل.",
     features: [
-      { icon: Target, title: "Turns goals into plans", titleAr: "يحوّل أهدافك لخطط", sub: "Breaks big tasks into clear steps", subAr: "يقسّم المهام الكبيرة لخطوات واضحة" },
-      { icon: Bot, title: "Works autonomously", titleAr: "يشتغل بشكل مستقل", sub: "Keeps going until the job is done", subAr: "يكمّل لوحده لحد ما الشغل يخلص" },
-      { icon: ListChecks, title: "Finishes complex tasks", titleAr: "ينهي المهام المعقدة", sub: "Multi-step work, handled end to end", subAr: "شغل متعدد الخطوات من الأول للآخر" },
+      { title: "Turns goals into plans", titleAr: "يحوّل أهدافك لخطط", sub: "Breaks big tasks into clear steps", subAr: "يقسّم المهام الكبيرة لخطوات واضحة" },
+      { title: "Works autonomously", titleAr: "يشتغل بشكل مستقل", sub: "Keeps going until the job is done", subAr: "يكمّل لوحده لحد ما الشغل يخلص" },
+      { title: "Finishes complex tasks", titleAr: "ينهي المهام المعقدة", sub: "Multi-step work, handled end to end", subAr: "شغل متعدد الخطوات من الأول للآخر" },
     ],
   },
 ];
