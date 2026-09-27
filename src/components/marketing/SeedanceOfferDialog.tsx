@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-const SESSION_KEY = "megsy_offers_carousel_seen_v9";
+const SESSION_KEY = "megsy_offers_carousel_seen_v10";
 const AUTOPLAY_MS = 4200;
 
 type OfferFeature = { icon: LucideIcon; title: string; titleAr: string; sub: string; subAr: string };
@@ -186,13 +186,14 @@ export default function SeedanceOfferDialog() {
                     className="flex items-center gap-3.5"
                   >
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
                       style={{
-                        backgroundColor: `hsl(${current.accent} / 0.12)`,
+                        background: `linear-gradient(135deg, hsl(${current.accent} / 0.16), hsl(${current.accent} / 0.07))`,
+                        boxShadow: `inset 0 0 0 1px hsl(${current.accent} / 0.18), 0 1px 3px hsl(${current.accent} / 0.10)`,
                         color: `hsl(${current.accent})`,
                       }}
                     >
-                      <feature.icon className="h-5 w-5" strokeWidth={1.9} />
+                      <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.7} />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
