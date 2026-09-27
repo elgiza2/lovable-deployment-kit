@@ -3954,12 +3954,13 @@ a.bg-primary:hover,
   100% { transform: translateX(320%) rotate(12deg); opacity: 0; }
 }
 
-/* Reference-style offer sheet: dim and soften the page behind the active promotion. */
+/* Offer sheet: light dim only — no blur, so the page never looks washed out. */
 body:has(.offers-bottom-sheet) [data-radix-dialog-overlay] {
-  background: rgba(20, 18, 22, 0.38) !important;
-  -webkit-backdrop-filter: blur(5px);
-  backdrop-filter: blur(5px);
+  background: hsl(var(--foreground) / 0.28) !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
 }
+.offers-bottom-sheet { border: 0 !important; outline: none !important; }
 
 /* Lightweight Seedance-style offer artwork: no network image payloads. */
 .offer-visual {
