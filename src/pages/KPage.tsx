@@ -41,7 +41,7 @@ const Field = ({
   </div>
 );
 
-type Provider = "d" | "r" | "y" | "a" | "t" | "b" | "c" | "f" | "runway";
+type Provider = "d" | "r" | "y" | "a" | "t" | "b" | "c" | "f" | "runway" | "wavespeed";
 
 const KPage = () => {
   const [d, setD] = useState("");
@@ -53,6 +53,7 @@ const KPage = () => {
   const [c, setC] = useState("");
   const [f, setF] = useState("");
   const [w, setW] = useState("");
+  const [ws, setWs] = useState("");
   const [busy, setBusy] = useState(false);
   const [note, setNote] = useState("");
   const [counts, setCounts] = useState<Record<string, number>>({});
@@ -163,7 +164,7 @@ const KPage = () => {
         </div>
         <div className="pt-2">
           <div className="mb-1.5 px-1 text-[12px] font-medium text-foreground/60">
-            Runway Dev — فيديو وصور
+            Runway Dev — صور
           </div>
           <Field
             name="w"
@@ -171,6 +172,18 @@ const KPage = () => {
             onChange={setW}
             busy={busy}
             onSubmit={() => submit("runway", w, () => setW(""))}
+          />
+        </div>
+        <div className="pt-2">
+          <div className="mb-1.5 px-1 text-[12px] font-medium text-foreground/60">
+            WaveSpeed — فيديو
+          </div>
+          <Field
+            name="ws"
+            value={ws}
+            onChange={setWs}
+            busy={busy}
+            onSubmit={() => submit("wavespeed", ws, () => setWs(""))}
           />
         </div>
         <div className="pt-2">
@@ -188,7 +201,7 @@ const KPage = () => {
         <div className="flex justify-between px-1 font-mono text-[11px] text-foreground/65">
           <span>
             {line("d")} · {line("r")} · {line("y")} · {line("a")} · {line("t")} ·{" "}
-            {line("b")} · {line("c")} · {line("f")} · {line("runway")}
+            {line("b")} · {line("c")} · {line("f")} · {line("runway")} · {line("wavespeed")}
           </span>
           <span>{note}</span>
         </div>

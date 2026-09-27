@@ -489,7 +489,16 @@ function runwayFallbackModels(): ModelDetail[] {
   });
   return [
     ...RUNWAY_IMAGE_MODELS.map(([slug, name]) => base(slug, name, "image")),
-    ...RUNWAY_VIDEO_MODELS.map(([slug, name]) => base(slug, name, "video")),
+    ...WAVESPEED_VIDEO_MODELS.map(([slug, name]) => ({
+      ...base(slug, name, "video"),
+      id: slug,
+      provider: "wavespeed",
+      description: name,
+      longDescription: name,
+      badges: [],
+      iconUrl: undefined,
+      isFeatured: true,
+    })),
   ];
 }
 function mergeRunwayFallbacks(models: ModelDetail[]): ModelDetail[] {

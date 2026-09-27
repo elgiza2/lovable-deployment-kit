@@ -157,7 +157,10 @@ async function generateVideoScene(
   const body: Record<string, unknown> = {
     prompt: scene.prompt,
     model_slug: modelSlug,
-    duration: scene.duration_seconds || 5,
+    duration: Math.min(
+      scene.duration_seconds || 5,
+      getRunwayVideoPolicy(modelSlug)?.maxDuration ?? Infinity,
+    ),
     aspect_ratio: scene.aspect_ratio || aspectRatio,
   };
   const runwayPolicy = getRunwayVideoPolicy(modelSlug);
