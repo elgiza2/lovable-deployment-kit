@@ -32,7 +32,6 @@ import { AppRoutes } from "@/routes-app/AppRoutes";
 import { applyTheme } from "@/lib/theme";
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 import { loadTikTokPixel, trackTikTokFunnelEvent } from "@/lib/analytics/tiktokPixel";
-import SeedanceOfferDialog from "@/components/marketing/SeedanceOfferDialog";
 
 /** Watches background jobs / agent runs and notifies the user when they finish. */
 const BackgroundJobNotifier = lazyWithRetry(
@@ -204,7 +203,6 @@ const App = () => {
                   <ConfirmProvider>
                     <ScrollToTop />
                     <PageViewTracker />
-                    <SeedanceOfferDialog />
                     <InternalLinkInterceptor />
                     <MarketingTypographyScope />
 
