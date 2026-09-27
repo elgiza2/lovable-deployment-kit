@@ -203,6 +203,7 @@ const App = () => {
                   <ConfirmProvider>
                     <ScrollToTop />
                     <PageViewTracker />
+                    <WelcomeGate userId={currentUserId} />
                     <InternalLinkInterceptor />
                     <MarketingTypographyScope />
 
@@ -248,3 +249,22 @@ const App = () => {
 };
 
 export default App;
+
+function WelcomeGate({ userId }: { userId: string | null }) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  useEffect(() => {
+    if (userId) return;
+    if (location.pathname !== "/" && location.pathname !== "/chat") return;
+    const t = window.setTimeout(async () => {
+      try {
+        if (localStorage.getItem("megsy_welcome_seen_v1")) return;
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { data } = await supabase.auth.getSession();
+        if (!data.session) navigate("/welcome", { replace: true });
+      } catch { /* ignore */ }
+    }, 400);
+    return () => window.clearTimeout(t);
+  }, [userId, location.pathname, navigate]);
+  return null;
+}
