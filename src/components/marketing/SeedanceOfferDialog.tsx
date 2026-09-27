@@ -198,8 +198,10 @@ export default function SeedanceOfferDialog() {
                 type="button"
                 aria-label={offer.title}
                 onClick={() => go(index)}
-                className={`h-1.5 rounded-full p-0 transition-all duration-300 ${index === activeIndex ? "w-6 bg-foreground" : "w-1.5 bg-foreground/20"}`}
-              />
+                className="flex h-6 !min-h-0 !min-w-0 items-center justify-center border-0 bg-transparent p-0 px-0.5"
+              >
+                <span className={`block h-1.5 rounded-full transition-all duration-300 ${index === activeIndex ? "w-6 bg-foreground" : "w-1.5 bg-foreground/20"}`} />
+              </button>
             ))}
           </div>
 
