@@ -2037,6 +2037,11 @@ svg {
   --chat-reference-bg: var(--chat-claude-bg);
 }
 
+html.light [data-shell="megsy"][data-skin="claude"] {
+  --border: 340 12% 86%;
+  --input: 340 12% 88%;
+}
+
 @media (max-width: 767.98px) {
   [data-shell="megsy"][data-skin="claude"] {
     --chat-claude-bg: hsl(var(--background));
@@ -2064,9 +2069,7 @@ svg {
   }
 }
 
-/* Composer frame + mobile mode chips — one clean card surface.
-   Single canonical rule: soft card background, visible hairline border,
-   gentle shadow. No other file should strip these back off. */
+/* Dark composer keeps the current high-contrast treatment. */
 .chat-composer-frame {
   background: var(--chat-claude-composer) !important;
   border: 1px solid hsl(var(--foreground) / 0.22) !important;
@@ -2082,6 +2085,15 @@ html.dark .chat-composer-frame {
   box-shadow: 0 8px 30px hsl(0 0% 0% / 0.4) !important;
 }
 
+/* Restore the original light chat surfaces from loving-bonds-app. */
+html.light .chat-composer-frame {
+  background: var(--chat-claude-composer) !important;
+  border: 0 !important;
+  border-radius: 24px !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
 .mode-chip-btn,
 [data-chips-row] button {
   background: var(--chat-claude-composer) !important;
@@ -2090,6 +2102,12 @@ html.dark .chat-composer-frame {
   box-shadow: none !important;
   backdrop-filter: none !important;
   color: var(--chat-claude-fg);
+}
+
+html.light .mode-chip-btn,
+html.light [data-chips-row] button {
+  border: 0 !important;
+  box-shadow: none !important;
 }
 
 .mode-chip-btn[aria-pressed="true"],

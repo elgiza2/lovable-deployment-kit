@@ -53,6 +53,7 @@
 - Image models route through `anything-api`; slides cards render the real first slide.
 
 ## Open
+- [x] Restore the light chat palette, composer surface, chips, shadows, and serif greeting from the loving-bonds-app reference without changing chat behavior or the dark theme.
 - [x] Report the actual 48-person funnel: visit, signup start/completion, payment page/method, Vodafone Cash, and proof/order completion.
 - [ ] Track each page view's visitor country.
 - [ ] Redesign the four first-run slides with modest Arab-region imagery, distinct rising color transitions, and repaired slide-four text.
