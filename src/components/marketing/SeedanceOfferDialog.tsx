@@ -166,14 +166,17 @@ export default function SeedanceOfferDialog() {
               exit="exit"
               transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
             >
-              <DialogTitle className="text-center text-[22px] font-bold tracking-tight">
+              <DialogTitle
+                className="text-center text-[26px] leading-8 tracking-tight"
+                style={{ fontFamily: '"Instrument Serif", "ITC Garamond Std Narrow", Georgia, serif', fontWeight: 400 }}
+              >
                 {isArabic ? current.titleAr : current.title}
               </DialogTitle>
-              <DialogDescription className="mx-auto mt-1.5 max-w-[400px] text-center text-[14px] leading-6 text-muted-foreground">
+              <DialogDescription className="mx-auto mt-2 max-w-[380px] text-center text-[13.5px] leading-6 text-muted-foreground">
                 {isArabic ? current.bodyAr : current.body}
               </DialogDescription>
 
-              <ul className="mt-5 flex flex-col gap-3.5">
+              <ul className="mx-auto mt-6 flex max-w-[360px] flex-col gap-4">
                 {current.features.map((feature, i) => (
                   <motion.li
                     key={feature.title}
@@ -182,12 +185,18 @@ export default function SeedanceOfferDialog() {
                     transition={{ delay: 0.06 * i + 0.08, duration: 0.3 }}
                     className="flex items-center gap-3.5"
                   >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-muted text-foreground">
-                      <feature.icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
+                    <span
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+                      style={{
+                        backgroundColor: `hsl(${current.accent} / 0.12)`,
+                        color: `hsl(${current.accent})`,
+                      }}
+                    >
+                      <feature.icon className="h-5 w-5" strokeWidth={1.9} />
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[14.5px] font-semibold leading-5">{isArabic ? feature.titleAr : feature.title}</span>
-                      <span className="block text-[13px] leading-5 text-muted-foreground">{isArabic ? feature.subAr : feature.sub}</span>
+                      <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
+                      <span className="mt-0.5 block text-[12.5px] leading-5 text-muted-foreground">{isArabic ? feature.subAr : feature.sub}</span>
                     </span>
                   </motion.li>
                 ))}
