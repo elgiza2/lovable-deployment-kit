@@ -250,21 +250,19 @@ const App = () => {
 
 export default App;
 
-function WelcomeGate({ userId }: { userId: string | null }) {
+function WelcomeGate() {
   const navigate = useNavigate();
   const location = useLocation();
   useEffect(() => {
-    if (userId) return;
-    if (location.pathname !== "/" && location.pathname !== "/chat") return;
-    const t = window.setTimeout(async () => {
+    if (location.pathname === "/welcome" || location.pathname === "/auth") return;
+    const t = window.setTimeout(() => {
       try {
-        if (localStorage.getItem("megsy_welcome_seen_v1")) return;
-        const { supabase } = await import("@/integrations/supabase/client");
-        const { data } = await supabase.auth.getSession();
-        if (!data.session) navigate("/welcome", { replace: true });
+        // First visit only — every user (guest or signed in) sees it once.
+        if (localStorage.getItem(WELCOME_SEEN_KEY)) return;
+        navigate("/welcome", { replace: true });
       } catch { /* ignore */ }
     }, 400);
     return () => window.clearTimeout(t);
-  }, [userId, location.pathname, navigate]);
+  }, [location.pathname, navigate]);
   return null;
 }
