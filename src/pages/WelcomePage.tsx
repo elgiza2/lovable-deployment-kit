@@ -36,11 +36,17 @@ export default function WelcomePage() {
     });
   }, []);
 
-  const finish = () => {
+  const finish = async () => {
     try { localStorage.setItem(WELCOME_SEEN_KEY, "1"); } catch { /* ignore */ }
-    navigate("/auth", { replace: true });
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { data } = await supabase.auth.getSession();
+      navigate(data.session ? "/" : "/auth", { replace: true });
+    } catch {
+      navigate("/auth", { replace: true });
+    }
   };
-  const next = () => (i < slides.length - 1 ? setI(i + 1) : finish());
+  const next = () => (i < slides.length - 1 ? setI(i + 1) : void finish());
 
   const s = slides[i];
   const ease = [0.22, 1, 0.36, 1] as const;
@@ -105,13 +111,11 @@ export default function WelcomePage() {
         key={i}
         src={IMAGES[i]}
         alt=""
-        width={1024}
-        height={1536}
         initial={{ opacity: 0, scale: 1.04 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0 }}
         transition={{ duration: 0.7, ease }}
-        className={`absolute inset-0 h-full w-full object-cover ${cls}`}
+        className={`welcome-hero-img absolute inset-0 h-full w-full object-cover ${cls}`}
       />
     </AnimatePresence>
   );
