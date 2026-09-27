@@ -49,13 +49,33 @@ export default function WelcomePage() {
     <AnimatePresence mode="wait">
       <motion.div
         key={i}
-        initial={{ opacity: 0, y: 14 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{ duration: 0.45, ease }}
+        initial="hidden"
+        animate="show"
+        exit="exit"
+        variants={{
+          hidden: {},
+          show: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+          exit: { opacity: 0, y: -10, transition: { duration: 0.25, ease } },
+        }}
       >
-        <h1 className="welcome-title whitespace-pre-line">{s.t}</h1>
-        <p className="welcome-desc mt-4 max-w-[320px]">{s.d}</p>
+        <motion.h1
+          className="welcome-title whitespace-pre-line"
+          variants={{
+            hidden: { opacity: 0, y: 22, filter: "blur(6px)" },
+            show: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.55, ease } },
+          }}
+        >
+          {s.t}
+        </motion.h1>
+        <motion.p
+          className="welcome-desc mt-4 max-w-[320px]"
+          variants={{
+            hidden: { opacity: 0, y: 16 },
+            show: { opacity: 1, y: 0, transition: { duration: 0.5, ease } },
+          }}
+        >
+          {s.d}
+        </motion.p>
       </motion.div>
     </AnimatePresence>
   );
@@ -103,10 +123,7 @@ export default function WelcomePage() {
         {image("")}
         <div className="welcome-scrim absolute inset-0" />
         <div className="relative z-10 flex h-full flex-col px-6 pb-8 pt-[max(env(safe-area-inset-top),28px)]">
-          <div className="flex items-center justify-between">
-            <span className="welcome-logo">Megsy</span>
-            <button onClick={finish} className="welcome-skip">{ar ? "تخطي" : "Skip"}</button>
-          </div>
+          <span className="welcome-logo">Megsy</span>
           <div className="mt-auto">{text}</div>
           <div className="mt-10">{controls}</div>
         </div>
@@ -115,10 +132,7 @@ export default function WelcomePage() {
       {/* Desktop */}
       <div className="hidden h-[100dvh] gap-6 p-6 md:flex">
         <div className="flex flex-1 flex-col px-8 py-6">
-          <div className="flex items-center justify-between">
-            <span className="welcome-logo">Megsy</span>
-            <button onClick={finish} className="welcome-skip">{ar ? "تخطي" : "Skip"}</button>
-          </div>
+          <span className="welcome-logo">Megsy</span>
           <div className="my-auto">{text}</div>
           {controls}
         </div>
