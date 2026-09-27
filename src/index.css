@@ -3954,11 +3954,9 @@ a.bg-primary:hover,
   100% { transform: translateX(320%) rotate(12deg); opacity: 0; }
 }
 
-/* Offer sheet: light dim only — no blur, so the page never looks washed out. */
+/* Offer sheet: no overlay at all — the page keeps its full colors behind the sheet. */
 body:has(.offers-bottom-sheet) [data-radix-dialog-overlay] {
-  background: hsl(var(--foreground) / 0.28) !important;
-  -webkit-backdrop-filter: none !important;
-  backdrop-filter: none !important;
+  display: none !important;
 }
 .offers-bottom-sheet { border: 0 !important; outline: none !important; }
 

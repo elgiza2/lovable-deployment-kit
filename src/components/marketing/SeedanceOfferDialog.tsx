@@ -10,7 +10,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
-const SESSION_KEY = "megsy_offers_carousel_seen_v7";
+const SESSION_KEY = "megsy_offers_carousel_seen_v8";
 const AUTOPLAY_MS = 4200;
 
 type OfferFeature = { icon: LucideIcon; title: string; titleAr: string; sub: string; subAr: string };
