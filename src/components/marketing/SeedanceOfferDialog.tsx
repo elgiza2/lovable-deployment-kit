@@ -13,12 +13,10 @@ type OfferFeature = { title: string; titleAr: string; sub: string; subAr: string
 type Offer = {
   id: string;
   image: string;
-  iconImage: string;
   title: string;
   titleAr: string;
   body: string;
   bodyAr: string;
-  accent: string; // hsl triple for icon chip tint, e.g. "222 89% 56%"
   features: OfferFeature[];
 };
 
@@ -26,8 +24,6 @@ const OFFERS: Offer[] = [
   {
     id: "gpt_25",
     image: "/offer-gpt-25.jpg",
-    iconImage: "/offer-icon-gpt.png",
-    accent: "222 89% 56%",
     title: "GPT 2.5 Unlimited",
     titleAr: "GPT 2.5 بلا حدود",
     body: "Use our flagship model without limits for a full month.",
@@ -41,8 +37,6 @@ const OFFERS: Offer[] = [
   {
     id: "computer",
     image: "/offer-computer-25.jpg",
-    iconImage: "/offer-icon-computer.png",
-    accent: "162 72% 38%",
     title: "Megsy Computer",
     titleAr: "ميغسي كومبيوتر",
     body: "Let Megsy browse, click, research and get work done for you.",
@@ -56,8 +50,6 @@ const OFFERS: Offer[] = [
   {
     id: "agent",
     image: "/offer-agent-25.jpg",
-    iconImage: "/offer-icon-agent.png",
-    accent: "268 84% 60%",
     title: "Megsy Agent",
     titleAr: "وكيل ميغسي",
     body: "Turn complex goals into finished work with an autonomous AI agent.",
@@ -95,14 +87,12 @@ export default function SeedanceOfferDialog() {
     return () => window.clearInterval(timer);
   }, [open]);
 
-  // Preload the next slide's image and icon while the current one is showing
+  // Preload the next slide's image while the current one is showing.
   useEffect(() => {
     if (!open) return;
     const next = OFFERS[(activeIndex + 1) % OFFERS.length];
-    for (const src of [next.image, next.iconImage]) {
-      const img = new Image();
-      img.src = src;
-    }
+    const img = new Image();
+    img.src = next.image;
   }, [open, activeIndex]);
 
   const dismiss = () => {
@@ -194,15 +184,8 @@ export default function SeedanceOfferDialog() {
                     transition={{ delay: 0.06 * i + 0.08, duration: 0.3 }}
                     className="flex items-center gap-3.5"
                   >
-                    <span
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
-                      style={{
-                        background: `linear-gradient(135deg, hsl(${current.accent} / 0.16), hsl(${current.accent} / 0.07))`,
-                        boxShadow: `inset 0 0 0 1px hsl(${current.accent} / 0.18), 0 1px 3px hsl(${current.accent} / 0.10)`,
-                        color: `hsl(${current.accent})`,
-                      }}
-                    >
-                      <MegsyStar className="h-[18px] w-[18px]" />
+                    <span className="flex h-8 w-8 shrink-0 items-center justify-center text-foreground">
+                      <MegsyStar className="h-5 w-5" />
                     </span>
                     <span className="min-w-0">
                       <span className="block text-[14.5px] font-semibold leading-5 tracking-[-0.01em]">{isArabic ? feature.titleAr : feature.title}</span>
