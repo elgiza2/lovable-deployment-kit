@@ -25,6 +25,7 @@ const OFFERS: Offer[] = [
   {
     id: "gpt_25",
     image: "/offer-gpt-25.jpg",
+    iconImage: "/offer-icon-gpt.png",
     accent: "222 89% 56%",
     title: "GPT 2.5 Unlimited",
     titleAr: "GPT 2.5 بلا حدود",
@@ -39,6 +40,7 @@ const OFFERS: Offer[] = [
   {
     id: "computer",
     image: "/offer-computer-25.jpg",
+    iconImage: "/offer-icon-computer.png",
     accent: "162 72% 38%",
     title: "Megsy Computer",
     titleAr: "ميغسي كومبيوتر",
@@ -53,6 +55,7 @@ const OFFERS: Offer[] = [
   {
     id: "agent",
     image: "/offer-agent-25.jpg",
+    iconImage: "/offer-icon-agent.png",
     accent: "268 84% 60%",
     title: "Megsy Agent",
     titleAr: "وكيل ميغسي",
